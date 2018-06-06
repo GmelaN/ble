@@ -98,7 +98,8 @@ namespace ns3 {
       Ptr<Packet> m_currentPkt; //!< packet that is current being transmitted
 
       uint8_t retransmissionCount; //!< number of retransmissions of current packet
-      Time startTimePacket; //!< time that device tried to send a packet for the first time
+      Time startTimePacket; //!< time that device tried to send a 
+                            //   packet for the first time
       Time lastSend; //!< time at which was last transmission 
       Callback<void, Ptr<Packet> > m_ackChecked;
       Callback<void, Ptr<Packet> > m_ackCheckedError;

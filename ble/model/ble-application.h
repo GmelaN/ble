@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *  Based on lora-application from the lora ns-3 module,
+ *      designed by Brecht Reynders.
  */
 
 #ifndef BLE_APPLICATION_H
@@ -39,7 +41,8 @@ namespace ns3 {
 	 * \ingroup ble
 	 * \brief Ble default application.
 	 *
-	 * This application generates empty packets every X seconds.  This application mimics a sensor. 
+	 * This application generates empty packets every X seconds.  
+	 * This application mimics a sensor. 
 	 */
 	class BleApplication : public Application
 	{
@@ -57,7 +60,8 @@ namespace ns3 {
 
 		private:
 			/**
-			 * This function is the function to schedule a sensing event. With every sensing event, we generate the packet.
+			 * This function is the function to schedule a sensing event. 
+			 * With every sensing event, we generate the packet.
 			 */
 			void Sense (void);
 

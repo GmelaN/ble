@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *  Based on lora-application from the lora ns-3 module,
+ *      designed by Brecht Reynders.
  */
 
 // Implementation for ns3 Application base class.
@@ -170,7 +172,8 @@ namespace ns3 {
 		m_socket->Send (packet,0);
 
 		// Schedule a new event
-		m_SenseEvent = Simulator::Schedule(m_interPacketTime,&BleApplication::Sense,this);
+		m_SenseEvent = Simulator::Schedule(
+            m_interPacketTime,&BleApplication::Sense,this);
 	}
 
 } // namespace ns3

@@ -19,8 +19,6 @@
  */
 
 
-
-
 #include "ble-link-controller.h"
 #include "ns3/ble-net-device.h"
 #include "ns3/ble-bb-manager.h"
@@ -153,14 +151,16 @@ namespace ns3 {
     }
 
   void
-    BleLinkController::SetCheckedAckCallback (Callback<void, Ptr<Packet> > callback)
+    BleLinkController::SetCheckedAckCallback (Callback<void, 
+        Ptr<Packet> > callback)
     {
       NS_LOG_FUNCTION (this);
       m_ackChecked = callback;
     }
 
   void
-    BleLinkController::SetCheckedAckErrorCallback (Callback<void, Ptr<Packet> > callback)
+    BleLinkController::SetCheckedAckErrorCallback (Callback<void, 
+        Ptr<Packet> > callback)
     {
       NS_LOG_FUNCTION (this);
       m_ackCheckedError = callback;
@@ -168,7 +168,8 @@ namespace ns3 {
 
 
   void 
-    BleLinkController::SetAllChannels (std::vector<Ptr<SpectrumChannel>> allChannels)
+    BleLinkController::SetAllChannels (
+        std::vector<Ptr<SpectrumChannel>> allChannels)
     {
       NS_LOG_FUNCTION (this);
       m_allChannels = allChannels;
@@ -209,7 +210,7 @@ namespace ns3 {
       NS_LOG_FUNCTION(this);
       NS_ASSERT (this->GetCurrentPacket() != 0);
 
-      if (StartTransmission (this->GetCurrentPacket()->Copy(), false)) //more arguments should be added
+      if (StartTransmission (this->GetCurrentPacket()->Copy(), false))
       {
         retransmissionCount++;
         m_macTxTrace (this->GetCurrentPacket());
@@ -230,7 +231,9 @@ namespace ns3 {
       
       if (this->GetPhy()->GetState() != BlePhy::State::IDLE)
       {
-        NS_LOG_WARN ("Phy is busy at the moment, not possible to change to TX state, current PHY State = " << this->GetPhy()->GetState());
+        NS_LOG_WARN ("Phy is busy at the moment, 
+            not possible to change to TX state, current PHY State = " 
+            << this->GetPhy()->GetState());
         return false;
       }
       return this->GetPhy()->PrepareTX (packet);
@@ -246,12 +249,13 @@ namespace ns3 {
         if (this->GetPhy()->GetState() == BlePhy::State::IDLE)
           this->GetPhy()->PrepareRX();
         else
-          NS_LOG_WARN ("Phy is still busy, not possible to RX, current PHY state = " << this->GetPhy()->GetState());
+          NS_LOG_WARN ("Phy is still busy, 
+              not possible to RX, current PHY state = " 
+              << this->GetPhy()->GetState());
       }
       else
       {
         this->GetPhy()->ChangeState(BlePhy::State::IDLE);
-
       }
     }
 
@@ -271,11 +275,11 @@ namespace ns3 {
       }
     }
 
-
-
-  // Checks if a received packet is arrived correctly / needs an acknowledgement and also sends this acknowledgement
+  // Checks if a received packet is arrived correctly or 
+  // needs an acknowledgement and also sends this acknowledgement
   void
-    BleLinkController::CheckReceivedAckPacket (Ptr<Packet> packet, bool receptionError) 
+    BleLinkController::CheckReceivedAckPacket (Ptr<Packet> packet, 
+        bool receptionError) 
     {
       NS_LOG_FUNCTION (this);
       if (this->GetBBManager()->GetActiveLinkManager() != 0)
@@ -287,9 +291,16 @@ namespace ns3 {
         packet->PeekHeader(bmh); 
         
         // Ignore broadcast for error callback
-        if (bmh.GetDestAddr() != Mac16Address("FF:FF") || this->GetBBManager()->GetActiveLinkManager()->GetState() == BleLinkManager::State::SCANNER)
+        if (bmh.GetDestAddr() != Mac16Address("FF:FF") 
+            || this->GetBBManager()->GetActiveLinkManager()->GetState() 
+            == BleLinkManager::State::SCANNER)
         {
-          NS_LOG_ERROR("Reception ERROR: packet for " << bmh.GetDestAddr() << " arrived with a too high BER. Here addr: " << this->GetNetDevice()->GetAddress16() << " My active channel index: " << (int) this->GetBBManager()->GetActiveLinkManager()->GetCurrentChannelIndex());
+          NS_LOG_ERROR("Reception ERROR: packet for " << bmh.GetDestAddr() 
+              << " arrived with a too high BER. Here addr: " 
+              << this->GetNetDevice()->GetAddress16() 
+              << " My active channel index: " << 
+              (int) this->GetBBManager()->GetActiveLinkManager()
+              ->GetCurrentChannelIndex());
           m_ackCheckedError (packet);
         }
       }
@@ -308,7 +319,8 @@ namespace ns3 {
         {
           if (lm->GetState() == BleLinkManager::State::SCANNER )
           {
-            NS_LOG_INFO ("Received an ADVERTISING packet, length = " << int(bmh.GetLength()));
+            NS_LOG_INFO ("Received an ADVERTISING packet, length = " 
+                << int(bmh.GetLength()));
             m_ackChecked (packet);
           }
           else
@@ -330,7 +342,8 @@ namespace ns3 {
               else // Received data, callback upper layers
               {
                 //NS_ASSERT (bmh.GetLength() > 0);
-                NS_LOG_INFO ("Received a data packet, length = " << int(bmh.GetLength()));
+                NS_LOG_INFO ("Received a data packet, length = " 
+                    << int(bmh.GetLength()));
                 m_ackChecked (packet);
               }
             }
@@ -347,7 +360,8 @@ namespace ns3 {
             {
               if (! (lm->GetState() == BleLinkManager::State::SCANNER))
               {
-                Simulator::Schedule(MicroSeconds(T_IFS),&BleLinkManager::SendNextPacket, lm);
+                Simulator::Schedule(
+                    MicroSeconds(T_IFS),&BleLinkManager::SendNextPacket, lm);
               }
             }
             else
@@ -365,7 +379,5 @@ namespace ns3 {
       }
       }
     }
-
-  
 }
 

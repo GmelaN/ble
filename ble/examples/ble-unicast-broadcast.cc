@@ -53,8 +53,6 @@ NS_LOG_COMPONENT_DEFINE ("BleBroadcastUnicastExample");
    * Configuration *
    *****************/
 
-  // Based on Lora battery example
-
   int nbIterations = 1;
   double length = 30; //<! Square room with length as distance
   int pktsize = 20; //!< Size of packtets, in bytes

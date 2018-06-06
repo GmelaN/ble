@@ -88,10 +88,13 @@ namespace ns3 {
 
       // nbConnectionInterval == 0 means random connectioninterval
       void SetupLink(Role myRole, 
-          Ptr<BleLinkManager> otherLinkManager, bool scheduled, uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval);
+          Ptr<BleLinkManager> otherLinkManager, bool scheduled, 
+          uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval);
 
       void SetupLink(
-          std::vector<Ptr<BleLinkManager>> otherLinkManagers, bool scheduled, uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval, bool collAvoid);
+          std::vector<Ptr<BleLinkManager>> otherLinkManagers, 
+          bool scheduled, uint32_t nbTxWindowOffset, 
+          uint32_t nbConnectionInterval, bool collAvoid);
 
       Ptr<BleLink> GetAssociatedLink();
       void SetAssociatedLink(Ptr<BleLink> link);
@@ -185,7 +188,8 @@ namespace ns3 {
       void SetSN (bool sn);
       void SetNESN (bool nesn);
 
-      // Hop increment is used for channel selection algorithm, should be a random number
+      // Hop increment is used for channel selection algorithm, 
+      // should be a random number
       void SetHopIncrement (uint8_t hopIncrement);
 
       void ManageChannelSelection ();
@@ -212,7 +216,9 @@ namespace ns3 {
 
       State currentState;
       Role expectedRole;
-      Ptr<BleLink> m_associatedLink; //<! there is a link manager for each link, this is the link associated to his link manager
+      Ptr<BleLink> m_associatedLink; 
+      //<! there is a link manager for each link, 
+      // this is the link associated to this link manager
 
       Time m_lastTimeConnectionEstablished;
       Time m_lastTransmitWindowTime;
@@ -220,7 +226,9 @@ namespace ns3 {
       // Scheduling parameters 
       Time m_connInterval;
       uint16_t m_connSlaveLatency;
-      Time m_connSupervisionTimeout; // Max time between two received Data packet PDUs before connection is considered lost
+      // Max time between two received 
+      // Data packet PDUs before connection is considered lost
+      Time m_connSupervisionTimeout; 
       uint16_t m_connEventCounter;
       Time m_transmitWindowOffset;
       Time m_transmitWindowSize;
@@ -235,12 +243,17 @@ namespace ns3 {
       bool m_nextExpectedSequenceNumber;
       bool m_sequenceNumber;
       bool m_peerHasMoreData;
-      bool m_onePacketSend; //true if there was one packet send inside this TX window
+      bool m_onePacketSend; 
+      //m_onePacketSend is true if there was one packet send inside this TX window
       bool m_keepAliveActive;
 
       bool m_lastMD;
 
-      uint16_t m_advSleepCounter; // Keeps track of the number of advertising events in which this link manager cannot send a packet. Only valid if broadcastCollisionAvoidance is enabled.
+      uint16_t m_advSleepCounter; 
+      // Keeps track of the number of advertising events in which 
+      // this link manager cannot send a packet. 
+      // Only valid if broadcastCollisionAvoidance is enabled.
+
       uint16_t m_advSleepMax;
       bool m_broadcastCollisionAvoidance;
 
@@ -249,10 +262,7 @@ namespace ns3 {
       uint8_t m_hopIncrement;
       uint8_t m_dataChannelIndex;
       std::vector<uint8_t> m_usedChannels;
-
   };
-
 }
-
 #endif /* BLE_LINK_MANAGER_H */
 

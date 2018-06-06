@@ -212,7 +212,8 @@ namespace ns3 {
   // The BB Manager represents a device in a link
   void
     BleLinkManager::SetupLink(BleLinkManager::Role myRole, 
-        Ptr<BleLinkManager> otherLinkManager, bool scheduled, uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval)
+        Ptr<BleLinkManager> otherLinkManager, bool scheduled, 
+        uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval)
     {
       NS_LOG_FUNCTION (this << myRole);
       this->expectedRole = myRole;
@@ -251,7 +252,9 @@ namespace ns3 {
         link->SetMaster(this->GetBBManager());
         link->SetLinkType(BleLink::LinkType::UNCONNECTED);
       }
-      link->SetChannel (this->GetBBManager()->GetLinkController()->GetChannelBasedOnChannelIndex (0));
+      link->SetChannel (
+          this->GetBBManager()->GetLinkController()
+          ->GetChannelBasedOnChannelIndex (0));
      
       int connInterval = nbConnectionInterval; //3200
       int txWindowSize = 5000; //4*1250; // in Microseconds
@@ -263,7 +266,8 @@ namespace ns3 {
         otherLinkManager->SetConnInterval (MicroSeconds(connInterval*1250));
         this->SetTransmitWindowOffset (MicroSeconds (txWindowOffset*1250));
         this->SetTransmitWindowSize (MicroSeconds (txWindowSize));
-        otherLinkManager->SetTransmitWindowOffset (MicroSeconds (txWindowOffset*1250));
+        otherLinkManager->SetTransmitWindowOffset (
+            MicroSeconds (txWindowOffset*1250));
         otherLinkManager->SetTransmitWindowSize (MicroSeconds (txWindowSize));
       }
       else
@@ -278,11 +282,14 @@ namespace ns3 {
         otherLinkManager->SetConnInterval (MicroSeconds(connInterval*1250));
         this->SetTransmitWindowOffset (MicroSeconds (txWindowOffset*1250));
         this->SetTransmitWindowSize (MilliSeconds (5));
-        otherLinkManager->SetTransmitWindowOffset (MicroSeconds (txWindowOffset*1250));
+        otherLinkManager->SetTransmitWindowOffset (
+            MicroSeconds (txWindowOffset*1250));
         otherLinkManager->SetTransmitWindowSize (MilliSeconds (5));
       }
 
-      NS_LOG_INFO ("For link " << link << " connInterval = " << connInterval*1250 << "us, txWindowOffset = " << txWindowOffset*1250 << "us, WindowSize = 5 ms ");
+      NS_LOG_INFO ("For link " << link << " connInterval = " 
+          << connInterval*1250 << "us, txWindowOffset = " 
+          << txWindowOffset*1250 << "us, WindowSize = 5 ms ");
 
 
       Simulator::ScheduleNow(
@@ -296,9 +303,13 @@ namespace ns3 {
 
 
   // Same as above, but now for multiple peers, I will be the slave
-  //  keepAlive needs to be disabled on other peers (this will function as advertisement.)
+  //  keepAlive needs to be disabled on other peers 
+  //  (this will function as advertisement.)
   void
-    BleLinkManager::SetupLink(std::vector<Ptr<BleLinkManager>> otherLinkManagers, bool scheduled, uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval, bool collAvoid)
+    BleLinkManager::SetupLink(
+        std::vector<Ptr<BleLinkManager>> otherLinkManagers, 
+        bool scheduled, uint32_t nbTxWindowOffset, 
+        uint32_t nbConnectionInterval, bool collAvoid)
     {
       NS_LOG_FUNCTION (this );
       this->expectedRole = BleLinkManager::Role::CONNECTIONLESS_ROLE;
@@ -310,7 +321,8 @@ namespace ns3 {
      
       if (! scheduled)
       {
-        Ptr<UniformRandomVariable> randT = CreateObject<UniformRandomVariable> ();
+        Ptr<UniformRandomVariable> randT = 
+          CreateObject<UniformRandomVariable> ();
         randT->SetAttribute("Max", DoubleValue (3200));
         if (connInterval == 0)
           connInterval = randT->GetInteger(6, 3200);
@@ -325,7 +337,9 @@ namespace ns3 {
       Ptr<BleLink> link = CreateObject<BleLink> ();
       link->SetMaster(this->GetBBManager());
       link->SetLinkType(BleLink::LinkType::BROADCAST);
-      link->SetChannel (this->GetBBManager()->GetLinkController()->GetChannelBasedOnChannelIndex (0));
+      link->SetChannel (
+          this->GetBBManager()->GetLinkController()
+          ->GetChannelBasedOnChannelIndex (0));
       this->SetAssociatedLink(link);
       this->m_nextExpectedSequenceNumber = false;
       this->m_sequenceNumber = false;
@@ -362,7 +376,9 @@ namespace ns3 {
           lm);
       }
  
-      NS_LOG_INFO ("For link " << link << " connInterval = " << connInterval*1250 << "us, txWindowOffset = " << txWindowOffset*1250 << "us, WindowSize = 5 ms ");
+      NS_LOG_INFO ("For link " << link << " connInterval = " 
+          << connInterval*1250 << "us, txWindowOffset = " 
+          << txWindowOffset*1250 << "us, WindowSize = 5 ms ");
 
       Simulator::ScheduleNow(
           &BleLinkManager::PrepareNextTransmitWindow,
@@ -426,7 +442,8 @@ namespace ns3 {
       }
       else
       {
-        NS_LOG_WARN ("Connection interval will now be set to a value that is outside the range that the BLE standard accepts");
+        NS_LOG_WARN ("Connection interval will now be set to a value that 
+            is outside the range that the BLE standard accepts");
         m_connInterval = connInterval;
       }
     }
@@ -436,10 +453,12 @@ namespace ns3 {
     BleLinkManager::SetConnSlaveLatency (uint16_t connSlaveLatency)
     {
       NS_LOG_FUNCTION (this);
-      if (! (connSlaveLatency <= (GetConnSupervisionTimeout()/GetConnInterval() - 1) ||
+      if (! (connSlaveLatency <= 
+            (GetConnSupervisionTimeout()/GetConnInterval() - 1) ||
             connSlaveLatency <= 500))
       {
-        NS_LOG_WARN (" Connection Slave Latency will be set to an invalid value" );
+        NS_LOG_WARN (" Connection Slave Latency will be set 
+            to an invalid value" );
       }
       m_connSlaveLatency = connSlaveLatency;
     }
@@ -454,7 +473,8 @@ namespace ns3 {
             //&& (connSupervisionTimeout%MilliSeconds(10) < NanoSeconds(PRECISION)) 
             ) )
       {
-        NS_LOG_WARN (" Connection Supervision timout will be set to an invalid value" );
+        NS_LOG_WARN (" Connection Supervision 
+            timout will be set to an invalid value" );
       }
       m_connSupervisionTimeout = connSupervisionTimeout;
     }
@@ -672,7 +692,8 @@ namespace ns3 {
       {
         nextTXWindow = GetConnInterval ();
       }
-      NS_LOG_INFO (" Next TX Window in " << nextTXWindow.GetSeconds() << " my link = " << this->GetAssociatedLink());
+      NS_LOG_INFO (" Next TX Window in " << nextTXWindow.GetSeconds() 
+          << " my link = " << this->GetAssociatedLink());
       return nextTXWindow;
     }
 
@@ -692,7 +713,7 @@ namespace ns3 {
      BleLinkManager::IsInsideLastTransmitWindow (Time thisTime)
      {
        return (thisTime >= GetLastTransmitWindowTime() 
-           && thisTime <= GetLastTransmitWindowTime () + GetTransmitWindowSize () );
+           && thisTime <= GetLastTransmitWindowTime () + GetTransmitWindowSize ());
      }
 
    // Prepares the simulator for the next transmitwindow
@@ -746,10 +767,6 @@ namespace ns3 {
      {
        NS_LOG_FUNCTION (this);
        Time currentTime = Simulator::Now();
- //      NS_LOG_DEBUG (" Time of last transmitwindow " << GetLastTransmitWindowTime().GetSeconds());
- //      NS_LOG_DEBUG (" Transmitwindow size " << GetTransmitWindowSize ().GetSeconds ());
- //      NS_LOG_DEBUG (" Current Time " << currentTime.GetSeconds ());
- //      NS_LOG_DEBUG (" Is inside tx window " << IsInsideLastTransmitWindow (currentTime));
        NS_ASSERT (this->GetState() != SCANNER ); // A scanner cannot send data.
        
        bool readyForNewData;
@@ -760,7 +777,8 @@ namespace ns3 {
        
        if (IsInsideLastTransmitWindow (currentTime))
        {
-           if (this->GetCurrentPacket () != 0 && (! readyForNewData) && (! (this->GetState() == ADVERTISER)))
+           if (this->GetCurrentPacket () != 0 && (! readyForNewData) 
+               && (! (this->GetState() == ADVERTISER)))
            {
              // Transmission of a packet failed during the last
              // TX slot, resend this packet first.
@@ -774,7 +792,9 @@ namespace ns3 {
                BleMacHeader bmh1;
                Ptr<QueueItem> item = m_queue->Dequeue ();
                NS_ASSERT (item);
-               NS_LOG_DEBUG ("New packet set as current packet. This new packet is not a dummy / Keep Alive Packet. Packets left in the queue: "
+               NS_LOG_DEBUG ("New packet set as current packet. 
+                   This new packet is not a dummy / Keep Alive Packet. 
+                   Packets left in the queue: "
                    << m_queue->GetCurrentSize());
                Ptr<Packet> packet = item->GetPacket();
                packet->RemoveHeader(bmh1);
@@ -803,7 +823,8 @@ namespace ns3 {
                if (( ! ( this->GetState() == ADVERTISER) ) || 
                    NeedToSendAtLeastOne() || 
                    GetPeerHasMoreData()) 
-               // Peer has more data, so I should answer to him as long as he has data
+               // Peer has more data, 
+               //   so I should answer to him as long as he has data
                // OR:
                // I need to send at least one packet in a TX window
                //  because:
@@ -820,7 +841,8 @@ namespace ns3 {
                  this->SetMyLastMD(! m_queue->IsEmpty ());
                  bmh2.SetNESN(m_nextExpectedSequenceNumber);
                  bmh2.SetSN(m_sequenceNumber);
-                 bmh2.SetSrcAddr(this->GetBBManager()->GetNetDevice()->GetAddress16());
+                 bmh2.SetSrcAddr(
+                     this->GetBBManager()->GetNetDevice()->GetAddress16());
                  bmh2.SetDestAddr(Mac16Address("FF:FF"));
                  dummyPacket->AddHeader(bmh2);
                  SetCurrentPacket (dummyPacket);
@@ -836,7 +858,9 @@ namespace ns3 {
            {
              BleMacHeader bmh3;
              this->GetCurrentPacket()->PeekHeader(bmh3);
-             NS_LOG_INFO ("Src Addr for current packet: " << bmh3.GetSrcAddr() << " Dest address for current packet: " << bmh3.GetDestAddr()); 
+             NS_LOG_INFO ("Src Addr for current packet: " 
+                 << bmh3.GetSrcAddr() << " Dest address for current packet: " 
+                 << bmh3.GetDestAddr()); 
              Simulator::ScheduleNow(
                      &BleLinkController::StartPacketTransmission, 
                      this->GetBBManager()->GetLinkController(),
@@ -896,7 +920,10 @@ namespace ns3 {
        {
          this->GetBBManager()->SetActiveLinkManager(this);
 
-         NS_LOG_INFO (this << " Start of a TransmitWindow, my Role = " << expectedRole << " my state = " << GetState() << " my link = " << this->GetAssociatedLink() << " this BBM = " << this->GetBBManager());
+         NS_LOG_INFO (this << " Start of a TransmitWindow, my Role = " 
+             << expectedRole << " my state = " << GetState() 
+             << " my link = " << this->GetAssociatedLink() << " this BBM = " 
+             << this->GetBBManager());
 
          SetLastTransmitWindowTime(Simulator::Now());
          m_endOfCurrentWindow = Simulator::Schedule (
@@ -916,10 +943,6 @@ namespace ns3 {
          }
          else if (expectedRole == SLAVE_ROLE)
          {
-//
-//             NS_LOG_DEBUG("My ND = " << this->GetBBManager()->GetNetDevice());
-//             NS_LOG_DEBUG("My BBM = " << this->GetBBManager());
-//          NS_LOG_DEBUG("My Address = " << this->GetBBManager()->GetNetDevice()->GetAddress16());
            Simulator::ScheduleNow(
                &BleLinkController::PrepareForReception,
                this->GetBBManager()->GetLinkController(),
@@ -931,9 +954,11 @@ namespace ns3 {
            
            if (this->GetState () == SCANNER)
            {
-             if ((! m_queue->IsEmpty()) && ((m_advSleepCounter == 0) || (m_broadcastCollisionAvoidance == false)))
+             if ((! m_queue->IsEmpty()) && ((m_advSleepCounter == 0) 
+                   || (m_broadcastCollisionAvoidance == false)))
              {
-               // Data in Queue to advertise ==> move to advertiser state, make sure to exit afterwards
+               // Data in Queue to advertise 
+               // ==> move to advertiser state, make sure to exit afterwards
                this->SetState (ADVERTISER);
                SendNextPacket ();
              }
@@ -955,7 +980,8 @@ namespace ns3 {
            }
            else
            {
-             NS_LOG_ERROR ("The Link Manager is in an impossible Connectionless State!");
+             NS_LOG_ERROR ("The Link Manager is 
+                 in an impossible Connectionless State!");
              NS_ASSERT (false);
            }
          }
@@ -966,12 +992,20 @@ namespace ns3 {
        }
        else
        {
-         NS_LOG_INFO (this << " The BB manager " << this->GetBBManager() << " is busy, this tx window will be skipped,  my link = " << this->GetAssociatedLink() << " Active LM = " << this->GetBBManager()->GetActiveLinkManager() << " current PHY state = " << this->GetBBManager()->GetPhyState());
+         NS_LOG_INFO (this << " The BB manager " << this->GetBBManager() 
+             << " is busy, this tx window will be skipped,  my link = " 
+             << this->GetAssociatedLink() << " Active LM = " 
+             << this->GetBBManager()->GetActiveLinkManager() 
+             << " current PHY state = " << this->GetBBManager()->GetPhyState());
          NS_ASSERT (this->GetBBManager()->GetActiveLinkManager() != this);
-         NS_ASSERT (this->GetBBManager()->GetActiveLinkManager()->GetBBManager() == this->GetBBManager());
+         NS_ASSERT (this->GetBBManager()->GetActiveLinkManager()->GetBBManager() 
+             == this->GetBBManager());
 
-         // This can be false only if the active link manager is transmitting outside tx window
-         NS_ASSERT (this->GetBBManager()->GetActiveLinkManager()->IsInsideLastTransmitWindow(Simulator::Now()));
+         // This can be false only if the active link manager 
+         // is transmitting outside tx window
+         NS_ASSERT (
+             this->GetBBManager()->GetActiveLinkManager()
+             ->IsInsideLastTransmitWindow(Simulator::Now()));
 
          // Callback management 
          this->GetBBManager()->GetNetDevice()->NotifyTXWindowSkipped();

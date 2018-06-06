@@ -76,18 +76,21 @@ namespace ns3 {
 
       Ptr<Packet> GetCurrentPacket();
       void SetCurrentPacket(Ptr<Packet> packet);
-  //    uint8_t GetRetransmissionCount ();
-  //    void SetRetransmissionCount(uint8_t count);
-
 
       // Add a link to the list of links that can be associated
       // to this device
       void AddLinkManager(Ptr<BleLinkManager> linkManager);
-      Ptr<BleLink> CreateLink(Ptr<BleBBManager> otherBBManager, BleLinkManager::Role myRole);
-      Ptr<BleLink> CreateLinkScheduled(Ptr<BleBBManager> otherBBManager, BleLinkManager::Role myRole, bool scheduled, uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval);
+      Ptr<BleLink> CreateLink(Ptr<BleBBManager> otherBBManager, 
+          BleLinkManager::Role myRole);
+      Ptr<BleLink> CreateLinkScheduled(Ptr<BleBBManager> otherBBManager, 
+          BleLinkManager::Role myRole, bool scheduled, 
+          uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval);
       
       // Create a link with multiple nodes. this device will be the master
-      Ptr<BleLink> CreateLinkScheduledMultipleNodes(std::list<Ptr<BleBBManager>> otherBBManagers, bool scheduled, uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval, bool collAvoid);
+      Ptr<BleLink> CreateLinkScheduledMultipleNodes(
+          std::list<Ptr<BleBBManager>> otherBBManagers, bool scheduled, 
+          uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval, 
+          bool collAvoid);
 
       // Check if a specific link exists
       bool LinkExists (Ptr<BleLink> link);
@@ -111,7 +114,8 @@ namespace ns3 {
 
       /*
        * The link manager that has control over the phy device at the moment
-       * this is necessary so we could reply using the right parameters / window etc.
+       * this is necessary so we could reply using the right parameters / 
+       * window etc.
        */
       void SetActiveLinkManager(Ptr<BleLinkManager> lm);
       Ptr<BleLinkManager> GetActiveLinkManager();
@@ -124,8 +128,6 @@ namespace ns3 {
       // at this moment
       Ptr<BleLinkManager> m_activeLinkManager;
  };
-
-
 
 }
 

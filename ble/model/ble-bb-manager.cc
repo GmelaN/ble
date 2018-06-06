@@ -165,7 +165,10 @@ namespace ns3 {
     }
   
   Ptr<BleLink> 
-    BleBBManager::CreateLinkScheduledMultipleNodes(std::list<Ptr<BleBBManager>> otherBBManagers, bool scheduled, uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval, bool collAvoid)
+    BleBBManager::CreateLinkScheduledMultipleNodes(
+        std::list<Ptr<BleBBManager>> otherBBManagers, bool scheduled, 
+        uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval, 
+        bool collAvoid)
     {
       NS_LOG_FUNCTION (this);
       // Channel map setup
@@ -198,7 +201,8 @@ namespace ns3 {
         otherLinkManagers.push_back (otherLinkManager);
       }
       
-      myLinkManager->SetupLink(otherLinkManagers, scheduled, nbTxWindowOffset, nbConnectionInterval, collAvoid); 
+      myLinkManager->SetupLink(otherLinkManagers, scheduled, nbTxWindowOffset, 
+          nbConnectionInterval, collAvoid); 
       
       this->AddLinkManager(myLinkManager);
       uint32_t it = 0;
@@ -212,7 +216,8 @@ namespace ns3 {
 
   Ptr<BleLink> 
     BleBBManager::CreateLinkScheduled(Ptr<BleBBManager> otherBBManager,
-        BleLinkManager::Role myRole, bool scheduled, uint32_t nbTxWindowOffset, uint32_t nbConnectionInterval)
+        BleLinkManager::Role myRole, bool scheduled, uint32_t nbTxWindowOffset, 
+        uint32_t nbConnectionInterval)
     {
       NS_LOG_FUNCTION (this);
 
@@ -241,7 +246,8 @@ namespace ns3 {
       myLinkManager->SetHopIncrement (hopIncr);
       otherLinkManager->SetHopIncrement (hopIncr);
 
-      myLinkManager->SetupLink(myRole, otherLinkManager, scheduled, nbTxWindowOffset, nbConnectionInterval); 
+      myLinkManager->SetupLink(myRole, otherLinkManager, scheduled, 
+          nbTxWindowOffset, nbConnectionInterval); 
 
       this->AddLinkManager(myLinkManager);
       otherBBManager->AddLinkManager(otherLinkManager);
@@ -353,7 +359,8 @@ namespace ns3 {
         std::list<Ptr<BleBBManager>>::iterator it2;
         Ptr<BleLinkManager> lm = *it;
         Ptr<BleLink> temp = lm->GetAssociatedLink();
-        if (temp->GetLinkType() == BleLink::LinkType::BROADCAST && address == Mac16Address("FF:FF"))
+        if (temp->GetLinkType() == BleLink::LinkType::BROADCAST 
+            && address == Mac16Address("FF:FF"))
           return true;
         std::list<Ptr<BleBBManager>> all_devices = temp->GetLinkedDevices();
         for (it2 = all_devices.begin(); it2 != all_devices.end(); ++it2)
@@ -362,7 +369,8 @@ namespace ns3 {
           NS_ASSERT(bbm != 0);
           Ptr<BleNetDevice> nd = bbm->GetNetDevice ();
           NS_ASSERT(nd != 0);
-          if (nd->GetAddress16() == address && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
+          if (nd->GetAddress16() == address 
+              && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
           {
             return true;
           }
@@ -382,7 +390,8 @@ namespace ns3 {
         std::list<Ptr<BleBBManager>>::iterator it2;
         Ptr<BleLinkManager> lm = *it;
         Ptr<BleLink> temp = lm->GetAssociatedLink();
-        if (temp->GetLinkType() == BleLink::LinkType::BROADCAST && address == Mac16Address("FF:FF"))
+        if (temp->GetLinkType() == BleLink::LinkType::BROADCAST 
+            && address == Mac16Address("FF:FF"))
           return lm;
         std::list<Ptr<BleBBManager>> all_devices = temp->GetLinkedDevices();
         for (it2 = all_devices.begin(); it2 != all_devices.end(); ++it2)
@@ -391,7 +400,8 @@ namespace ns3 {
           NS_ASSERT(bbm != 0);
           Ptr<BleNetDevice> nd = bbm->GetNetDevice ();
           NS_ASSERT(nd != 0);
-          if (nd->GetAddress16() == address && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
+          if (nd->GetAddress16() == address 
+              && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
           {
             return lm;
           }
@@ -413,7 +423,8 @@ namespace ns3 {
         std::list<Ptr<BleBBManager>>::iterator it2;
         Ptr<BleLinkManager> lm = *it;
         Ptr<BleLink> temp = lm->GetAssociatedLink();
-        if (temp->GetLinkType() == BleLink::LinkType::BROADCAST && address == Mac16Address("FF:FF"))
+        if (temp->GetLinkType() == BleLink::LinkType::BROADCAST 
+            && address == Mac16Address("FF:FF"))
           return temp;
         std::list<Ptr<BleBBManager>> all_devices = temp->GetLinkedDevices();
         for (it2 = all_devices.begin(); it2 != all_devices.end(); ++it2)
@@ -422,7 +433,8 @@ namespace ns3 {
           NS_ASSERT(bbm != 0);
           Ptr<BleNetDevice> nd = bbm->GetNetDevice ();
           NS_ASSERT(nd != 0);
-          if (nd->GetAddress16() == address && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
+          if (nd->GetAddress16() == address 
+              && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
           {
             return temp;
           }
