@@ -18,6 +18,9 @@
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
  *  Based on lora-application from the lora ns-3 module,
  *      designed by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
+ *
  */
 
 #ifndef BLE_APPLICATION_H
