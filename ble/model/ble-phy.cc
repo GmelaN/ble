@@ -314,13 +314,18 @@ namespace ns3 {
 						for (auto &it : m_params)
 						{
 							if (it->GetChannel() == channel){
+                                // Co-channel rejection:
+                                // 6 dB ==> 4.0
+                                // 11 dB ==> 12.6
+                                double ccrejection = 12.6;
+
 								//if there is a collision, No problem if 6dB power difference, but other is corrupted;
-								if (Integral(*it->psd)*4 < Integral(*sfParams->psd)){
+								if (Integral(*it->psd)*ccrejection < Integral(*sfParams->psd)){
 									it->SetBer(10);
 								}
 								else{
 									//if 6dB lower power, there is no detection
-									if (Integral(*it->psd) > 4*Integral(*sfParams->psd)){
+									if (Integral(*it->psd) > ccrejection*Integral(*sfParams->psd)){
 										sfParams->SetBer(10);
 									}
 									else

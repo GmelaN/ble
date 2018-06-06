@@ -535,6 +535,7 @@ namespace ns3 {
 		{
 			NS_LOG_FUNCTION (this << packet);
 
+            NS_ASSERT(packet != 0);
 			BleMacHeader header;
 			packet->PeekHeader (header);
 			NS_LOG_LOGIC ("packet : Source --> " << header.GetSrcAddr () << " Dest --> " << header.GetDestAddr()
@@ -563,6 +564,10 @@ namespace ns3 {
             const Address dest_addr = Address(header.GetDestAddr());
 			NS_LOG_LOGIC ("packet size = " << packet_copy1->GetSize() );
 
+           // NS_ASSERT(src_addr.GetLength() > 0);
+           // NS_ASSERT(dest_addr.GetLength() > 0);
+           // NS_ASSERT(header.GetSrcAddr() != 0);
+           // NS_ASSERT(header.GetDestAddr() != 0);
            // std::cout << std::endl;
            // packet_copy1->Print(std::cout);
            // std::cout << std::endl;
@@ -574,13 +579,22 @@ namespace ns3 {
             if (packetType == PACKET_BROADCAST )
             {
 			  m_macRxBroadcastTrace(packet, this);
+              NS_ASSERT(packet_copy != 0);
               m_rxCallback (nd_pointer, packet_copy, protocol, src_addr);
             }
             else if (packetType != PACKET_OTHERHOST )
 			{
 			    NS_LOG_LOGIC ("packet : Source --> " << header.GetSrcAddr () << " Dest --> " << header.GetDestAddr()
                   << "(here: " << m_address << ") protocol: " << header.GetProtocol () );
+                NS_ASSERT(src_addr.GetLength() > 0);
+                NS_ASSERT(dest_addr.GetLength() > 0);
+                NS_ASSERT(src_addr.GetLength() == 2);
+                NS_ASSERT(dest_addr.GetLength() == 2);
+                NS_ASSERT(header.GetSrcAddr() != 0);
+                NS_ASSERT(header.GetDestAddr() != 0);    
+                NS_ASSERT(packet != 0);
 				m_macRxTrace(packet);
+                NS_ASSERT(packet_copy != 0);
                 m_rxCallback (nd_pointer, packet_copy, protocol, src_addr);
                 m_promiscRxCallback (nd_pointer, packet_copy, protocol, src_addr, dest_addr, packetType);
 				Simulator::ScheduleNow(&BleBBManager::TryAgain, this->GetBBManager());

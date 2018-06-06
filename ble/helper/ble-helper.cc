@@ -16,8 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
- *	Brecht Reynders <brecht.reynders@esat.kuleuven.be>
  *	Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *	Brecht Reynders <brecht.reynders@esat.kuleuven.be>
  */
 #include "ble-helper.h"
 #include <ns3/ble-module.h>
@@ -99,8 +99,8 @@ BleHelper::EnableLogComponents (void)
   LogComponentEnableAll (LOG_PREFIX_FUNC);
   LogComponentEnableAll (LOG_PREFIX_LEVEL);
   LogComponentEnableAll (LOG_PREFIX_NODE);
-  bool enableAll = false;
-  bool enableWarn = true;
+  bool enableAll = true;
+  bool enableWarn = false;
   if (enableAll)
   {
     LogComponentEnable ("BleErrorModel", LOG_LEVEL_ALL);

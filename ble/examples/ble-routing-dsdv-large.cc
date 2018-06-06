@@ -20,6 +20,7 @@
  */
 
 
+
 // Include a header file from your module to test.
 //#include <ns3/log.h>
 #include <ns3/core-module.h>
@@ -46,7 +47,7 @@
 #include "ns3/internet-apps-module.h"
 #include "ns3/network-module.h"
 #include <ns3/okumura-hata-propagation-loss-model.h>
-#include "ns3/aodv-module.h"
+#include "ns3/dsdv-module.h"
 //#include "ns3/v4ping-helper.h"
 #include <ns3/ipv6-routing-table-entry.h>
 #include <ns3/ipv6-static-routing-helper.h>
@@ -55,18 +56,18 @@
 
 using namespace ns3;
 
-NS_LOG_COMPONENT_DEFINE ("BleRoutingAodv");
+NS_LOG_COMPONENT_DEFINE ("BleRoutingDsdv");
 
   /*****************
    * Configuration *
    *****************/ 
 
   int nbIterations = 1;
-  double length = 5; //<! Square room with length as distance
+  double length = 1000; //<! Square room with length as distance
   int pktsize = 20; //!< Size of packtets, in bytes
-  int duration = 530; //<! Duration of the simulation in seconds
+  int duration = 130; //<! Duration of the simulation in seconds
   int packetSendDuration = 10; //<! Time during which new packets should be quied 
-  bool verbose = false; // Enable logging
+  bool verbose = true; // Enable logging
   bool nakagami = false; // enable nakagami path loss
   bool dynamic = false; // Wether the nodes are moving yes or no
   bool scheduled = true; // Schedule the TX windows instead of random parameters.
@@ -78,7 +79,6 @@ NS_LOG_COMPONENT_DEFINE ("BleRoutingAodv");
   int broadcastInterval = 4*nNodes; //!< Time between two packets from the same node (for good results, should be larger than nNodes*nbConnInterval(s) 
   int pingInterval = 10; // In seconds
   double internodedistance = 15.0; // De afstand tussen de nodes in meters.
-  bool randomNodePlacement = false;
 
   Ptr<OutputStreamWrapper> m_stream = 0; // Stream for waterfallcurve
   Ptr<UniformRandomVariable> randT = CreateObject<UniformRandomVariable> ();
@@ -183,10 +183,10 @@ int main (int argc, char** argv)
 
 
   cmd.Parse (argc,argv);
-  LogComponentEnableAll (LOG_PREFIX_TIME);
-  LogComponentEnableAll (LOG_PREFIX_FUNC);
-  LogComponentEnableAll (LOG_PREFIX_LEVEL);
-  LogComponentEnableAll (LOG_PREFIX_NODE);
+ // LogComponentEnableAll (LOG_PREFIX_TIME);
+ // LogComponentEnableAll (LOG_PREFIX_FUNC);
+ // LogComponentEnableAll (LOG_PREFIX_LEVEL);
+ // LogComponentEnableAll (LOG_PREFIX_NODE);
  
   // Enable logging
   BleHelper helper;
@@ -237,15 +237,10 @@ int main (int argc, char** argv)
     for (uint32_t nodePositionsAssigned = 0; nodePositionsAssigned < nNodes; nodePositionsAssigned++)
     {
       double x,y;
-      if (randomNodePlacement)
-      {
-        x = randT->GetInteger(0,length);
-        y = randT->GetInteger(0,length);
-      }
-      else {
-        x = double (nodePositionsAssigned)*internodedistance;
-        y = 0.0;
-      }
+      x = double (nodePositionsAssigned)*internodedistance;
+      y = 0.0;
+      //x = randT->GetInteger(0,length);
+      //y = randT->GetInteger(0,length);
       NS_LOG (LOG_INFO, "x = " << x << " y = " << y);
       nodePositionList->Add (Vector (x,y,1.0));
     }
@@ -278,14 +273,19 @@ int main (int argc, char** argv)
    // }
 
     // Install Internet stack
-    AodvHelper aodv;
+   // AodvHelper aodv;
+   // InternetStackHelper stack;
+   // aodv.Set("HelloInterval", TimeValue(Seconds(6)));
+   // aodv.Set("ActiveRouteTimeout", TimeValue(Seconds(20)));
+   // aodv.Set("BlackListTimeout", TimeValue(Seconds(18)));
+   // aodv.Set("NodeTraversalTime", TimeValue(Seconds(3)));
+   // aodv.Set("NextHopWait", TimeValue(Seconds(4)));
+    DsdvHelper dsdv;
+    dsdv.Set ("SettlingTime", TimeValue (Seconds (6)));
+    dsdv.Set ("PeriodicUpdateInterval", TimeValue (Seconds (15)));
+
     InternetStackHelper stack;
-    aodv.Set("HelloInterval", TimeValue(Seconds(36)));
-    aodv.Set("ActiveRouteTimeout", TimeValue(Seconds(480)));
-    aodv.Set("BlackListTimeout", TimeValue(Seconds(488)));
-    aodv.Set("NodeTraversalTime", TimeValue(Seconds(40)));
-    aodv.Set("NextHopWait", TimeValue(Seconds(40)));
-    stack.SetRoutingHelper (aodv);
+    stack.SetRoutingHelper (dsdv);
     stack.Install (bleDeviceNodes);
 
  //   SixLowPanHelper sixlowpan;
@@ -306,12 +306,8 @@ int main (int argc, char** argv)
 
     if (printRoutes)
     {
-      Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ("aodv5.routes", std::ios::out);
-      aodv.PrintRoutingTableAllAt (Seconds (5), routingStream);
-      Ptr<OutputStreamWrapper> routingStream2 = Create<OutputStreamWrapper> ("aodv120.routes", std::ios::out);
-      aodv.PrintRoutingTableAllAt (Seconds (120), routingStream2);
-      Ptr<OutputStreamWrapper> routingStream3 = Create<OutputStreamWrapper> ("aodv470.routes", std::ios::out);
-      aodv.PrintRoutingTableAllAt (Seconds (470), routingStream3);
+      Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ("dsdv.routes", std::ios::out);
+      dsdv.PrintRoutingTableAllAt (Seconds (duration - 10), routingStream);
     }
 
     // Create links between the nodes
@@ -322,21 +318,16 @@ int main (int argc, char** argv)
     //ApplicationContainer apps1 = helper.GenerateBroadcastTraffic (randT, bleDeviceNodes, pktsize, 0, packetSendDuration, broadcastInterval);
     //ApplicationContainer apps2 = helper.GenerateTraffic (randT, bleDeviceNodes, pktsize, 0, packetSendDuration, unicastInterval);
 
-    ApplicationContainer app;
-    for (uint32_t i=1; i < nNodes; i++)
-    {
-      V4PingHelper ping (interfaces.GetAddress (i));
+    V4PingHelper ping (interfaces.GetAddress (nNodes-1));
 
-     // Ping6Helper ping; // (interfaces.GetAddress (nNodes-1));
-     // ping.SetLocal (interfaces.GetAddress (0,1));
-      ping.SetAttribute ("Verbose", BooleanValue (true));
-      ping.SetAttribute ("Interval", TimeValue (Seconds (pingInterval)));
+   // Ping6Helper ping; // (interfaces.GetAddress (nNodes-1));
+   // ping.SetLocal (interfaces.GetAddress (0,1));
+    ping.SetAttribute ("Verbose", BooleanValue (true));
+    ping.SetAttribute ("Interval", TimeValue (Seconds (pingInterval)));
 
-      ApplicationContainer p = ping.Install (bleDeviceNodes.Get (0));
-      p.Start (Seconds (10));
-      p.Stop (Seconds (duration) - Seconds (10));
-      app.Add(p);
-    }
+    ApplicationContainer p = ping.Install (bleDeviceNodes.Get (0));
+    p.Start (Seconds (10));
+    p.Stop (Seconds (duration) - Seconds (50));
 
     // Move a node to see effect on routing
    // Ptr<Node> node = bleDeviceNodes.Get (nNodes/2);

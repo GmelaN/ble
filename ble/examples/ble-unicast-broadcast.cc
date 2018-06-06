@@ -1,4 +1,24 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * Copyright (c) 2018 KU Leuven
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be> 
+ *  Based on the LoRa Battery example from the lora-ns3 module developped by Brecht Reynders.
+ */
+
 
 // Include a header file from your module to test.
 //#include <ns3/log.h>
@@ -40,12 +60,12 @@ NS_LOG_COMPONENT_DEFINE ("BleBroadcastUnicastExample");
   int pktsize = 20; //!< Size of packtets, in bytes
   int duration = 110; //<! Duration of the simulation in seconds
   int packetSendDuration = 100; //<! Time during which new packets should be quied 
-  bool verbose = false; // Enable logging
+  bool verbose = true; // Enable logging
   bool nakagami = false; // enable nakagami path loss
   bool dynamic = false; // Wether the nodes are moving yes or no
   bool scheduled = true; // Schedule the TX windows instead of random parameters.
   bool broadcastAvoidCollisions = true; // Try to avoid 2 nodes being in advertising mode at the same time
-  uint32_t nNodes = 25; // Number of nodes
+  uint32_t nNodes = 5; // Number of nodes
   uint32_t nbConnInterval = 3200; // [MAX 3200]  nbConnInterval*1,25ms = size of connection interval. if nbConnInterval = 0, each link will get a random conn interval
   int unicastInterval = 4; //!< Time between two packets from the same node 
   int broadcastInterval = 4*nNodes; //!< Time between two packets from the same node (for good results, should be larger than nNodes*nbConnInterval(s) 
