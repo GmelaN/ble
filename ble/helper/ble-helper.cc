@@ -18,6 +18,9 @@
  * Authors:
  *	Stijn Geysen <stijn.geysen@student.kuleuven.be>
  *	Brecht Reynders <brecht.reynders@esat.kuleuven.be>
+ *          Based on the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 #include "ble-helper.h"
 #include <ns3/ble-module.h>
@@ -56,7 +59,8 @@ AsciiBleMacTransmitSinkWithContext (
   std::string context,
   Ptr<const Packet> p)
 {
-  *stream->GetStream () << "t " << Simulator::Now ().GetSeconds () << " " << context << " " << *p << std::endl;
+  *stream->GetStream () << "t " << Simulator::Now ().GetSeconds () 
+    << " " << context << " " << *p << std::endl;
 }
 
 /**
@@ -69,17 +73,20 @@ AsciiBleMacTransmitSinkWithoutContext (
   Ptr<OutputStreamWrapper> stream,
   Ptr<const Packet> p)
 {
-  *stream->GetStream () << "t " << Simulator::Now ().GetSeconds () << " " << *p << std::endl;
+  *stream->GetStream () << "t " << Simulator::Now ().GetSeconds () 
+    << " " << *p << std::endl;
 }
 
 BleHelper::BleHelper (void)
 {
   m_channel = CreateObject<MultiModelSpectrumChannel> ();
 
-  Ptr<LogDistancePropagationLossModel> lossModel = CreateObject<LogDistancePropagationLossModel> ();
+  Ptr<LogDistancePropagationLossModel> lossModel = 
+    CreateObject<LogDistancePropagationLossModel> ();
   m_channel->AddPropagationLossModel (lossModel);
 
-  Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
+  Ptr<ConstantSpeedPropagationDelayModel> delayModel = 
+    CreateObject<ConstantSpeedPropagationDelayModel> ();
   m_channel->SetPropagationDelayModel (delayModel);
 	m_spectrumModel = 0;
   ConstructAllChannels();
@@ -162,12 +169,15 @@ BleHelper::ConstructAllChannels()
     bool nakagami = false;
     if (nakagami)
     {
-    	channelHelper.AddPropagationLoss ("ns3::OkumuraHataPropagationLossModel","Frequency",DoubleValue(2400e6));
-     	channelHelper.AddPropagationLoss ("ns3::NakagamiPropagationLossModel","m0",DoubleValue(1),"m1",DoubleValue(1),"m2",DoubleValue(1));
+    	channelHelper.AddPropagationLoss ("ns3::OkumuraHataPropagationLossModel",
+            "Frequency",DoubleValue(2400e6));
+     	channelHelper.AddPropagationLoss ("ns3::NakagamiPropagationLossModel",
+            "m0",DoubleValue(1),"m1",DoubleValue(1),"m2",DoubleValue(1));
     }
     else
     {
-      channelHelper.AddPropagationLoss ("ns3::OkumuraHataPropagationLossModel","Frequency",DoubleValue(2400e6));
+      channelHelper.AddPropagationLoss ("ns3::OkumuraHataPropagationLossModel",
+          "Frequency",DoubleValue(2400e6));
     }
     channelHelper.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
     
@@ -205,13 +215,18 @@ BleHelper::Install (NodeContainer c)
 		sfp->SetRxAntenna (Create<IsotropicAntennaModel> ());
 		nodeI->AddDevice(anandi);
 		anandi->SetGenericPhyTxStartCallback (MakeCallback(&BlePhy::StartTx,sfp));
-		sfp->SetTransmissionEndCallback( MakeCallback(&BleNetDevice::NotifyTransmissionEnd,anandi));
-		sfp->SetReceptionEndCallback ( MakeCallback(&BleLinkController::CheckReceivedAckPacket,blc));
-		sfp->SetReceptionStartCallback ( MakeCallback(&BleNetDevice::NotifyReceptionStart,anandi));
-		//sfp->SetReceptionMacCallback (MakeCallback(&BleNetDevice::CheckCorrectReceiver,anandi));
-        blc->SetCheckedAckCallback (MakeCallback(&BleNetDevice::NotifyReceptionEndOk, anandi));
-        blc->SetCheckedAckErrorCallback (MakeCallback(&BleNetDevice::NotifyReceptionEndError, anandi));
-    for (std::list<callbacktuple>::iterator it = m_callbacks.begin(); it!= m_callbacks.end();it++)
+		sfp->SetTransmissionEndCallback( 
+            MakeCallback(&BleNetDevice::NotifyTransmissionEnd,anandi));
+		sfp->SetReceptionEndCallback ( 
+            MakeCallback(&BleLinkController::CheckReceivedAckPacket,blc));
+		sfp->SetReceptionStartCallback ( 
+            MakeCallback(&BleNetDevice::NotifyReceptionStart,anandi));
+        blc->SetCheckedAckCallback (
+            MakeCallback(&BleNetDevice::NotifyReceptionEndOk, anandi));
+        blc->SetCheckedAckErrorCallback (
+            MakeCallback(&BleNetDevice::NotifyReceptionEndError, anandi));
+    for (std::list<callbacktuple>::iterator it = 
+        m_callbacks.begin(); it!= m_callbacks.end();it++)
     	{
   			anandi->TraceConnectWithoutContext(std::get<0>(*it),std::get<1>(*it));
     	}
@@ -274,7 +289,8 @@ PcapSniffBle (Ptr<PcapFileWrapper> file, Ptr<const Packet> packet)
 }
 
 void
-BleHelper::EnablePcapInternal (std::string prefix, Ptr<NetDevice> nd, bool promiscuous, bool explicitFilename)
+BleHelper::EnablePcapInternal (std::string prefix, 
+    Ptr<NetDevice> nd, bool promiscuous, bool explicitFilename)
 {
   NS_LOG_FUNCTION (this << prefix << nd << promiscuous << explicitFilename);
   //
@@ -290,7 +306,8 @@ BleHelper::EnablePcapInternal (std::string prefix, Ptr<NetDevice> nd, bool promi
   Ptr<BleNetDevice> device = nd->GetObject<BleNetDevice> ();
   if (device == 0)
     {
-      NS_LOG_INFO ("BleHelper::EnablePcapInternal(): Device " << device << " not of type ns3::BleNetDevice");
+      NS_LOG_INFO ("BleHelper::EnablePcapInternal(): Device " 
+          << device << " not of type ns3::BleNetDevice");
       return;
     }
 
@@ -307,16 +324,18 @@ BleHelper::EnablePcapInternal (std::string prefix, Ptr<NetDevice> nd, bool promi
     }
 
   Ptr<PcapFileWrapper> file = pcapHelper.CreateFile (filename, std::ios::out,
-                                                     PcapHelper::DLT_IEEE802_15_4);
+                                                  PcapHelper::DLT_IEEE802_15_4);
 
   if (promiscuous == true)
     {
-      device->TraceConnectWithoutContext ("PromiscSniffer", MakeBoundCallback (&PcapSniffBle, file));
+      device->TraceConnectWithoutContext ("PromiscSniffer", 
+          MakeBoundCallback (&PcapSniffBle, file));
 
     }
   else
     {
-      device->TraceConnectWithoutContext ("Sniffer", MakeBoundCallback (&PcapSniffBle, file));
+      device->TraceConnectWithoutContext ("Sniffer", 
+          MakeBoundCallback (&PcapSniffBle, file));
     }
 }
 
@@ -336,7 +355,8 @@ BleHelper::EnableAsciiInternal (
   Ptr<BleNetDevice> device = nd->GetObject<BleNetDevice> ();
   if (device == 0)
     {
-      NS_LOG_INFO ("BleHelper::EnableAsciiInternal(): Device " << device << " not of type ns3::BleNetDevice");
+      NS_LOG_INFO ("BleHelper::EnableAsciiInternal(): Device " 
+          << device << " not of type ns3::BleNetDevice");
       return;
     }
 
@@ -371,19 +391,25 @@ BleHelper::EnableAsciiInternal (
           filename = asciiTraceHelper.GetFilenameFromDevice (prefix, device);
         }
 
-      Ptr<OutputStreamWrapper> theStream = asciiTraceHelper.CreateFileStream (filename);
+      Ptr<OutputStreamWrapper> theStream = 
+        asciiTraceHelper.CreateFileStream (filename);
 
       // Ascii traces typically have "+", '-", "d", "r", and sometimes "t"
       // The Mac and Phy objects have the trace sources for these
       //
 
-      asciiTraceHelper.HookDefaultReceiveSinkWithoutContext<BleNetDevice> (device, "MacRx", theStream);
+      asciiTraceHelper.HookDefaultReceiveSinkWithoutContext<BleNetDevice> (
+          device, "MacRx", theStream);
 
-      device->TraceConnectWithoutContext ("MacTx", MakeBoundCallback (&AsciiBleMacTransmitSinkWithoutContext, theStream));
+      device->TraceConnectWithoutContext ("MacTx", 
+          MakeBoundCallback (&AsciiBleMacTransmitSinkWithoutContext, theStream));
 
-      asciiTraceHelper.HookDefaultEnqueueSinkWithoutContext<BleNetDevice> (device, "MacTxEnqueue", theStream);
-      asciiTraceHelper.HookDefaultDequeueSinkWithoutContext<BleNetDevice> (device, "MacTxDequeue", theStream);
-      asciiTraceHelper.HookDefaultDropSinkWithoutContext<BleNetDevice> (device, "MacTxDrop", theStream);
+      asciiTraceHelper.HookDefaultEnqueueSinkWithoutContext<BleNetDevice> (
+          device, "MacTxEnqueue", theStream);
+      asciiTraceHelper.HookDefaultDequeueSinkWithoutContext<BleNetDevice> (
+          device, "MacTxDequeue", theStream);
+      asciiTraceHelper.HookDefaultDropSinkWithoutContext<BleNetDevice> (
+          device, "MacTxDrop", theStream);
 
       return;
     }
@@ -403,35 +429,51 @@ BleHelper::EnableAsciiInternal (
 
 
   oss.str ("");
-  oss << "/NodeList/" << nodeid << "/DeviceList/" << deviceid << "/$ns3::BleNetDevice/MacRx";
-  device->TraceConnect ("MacRx", oss.str (), MakeBoundCallback (&AsciiTraceHelper::DefaultReceiveSinkWithContext, stream));
+  oss << "/NodeList/" << nodeid << "/DeviceList/" << deviceid 
+    << "/$ns3::BleNetDevice/MacRx";
+  device->TraceConnect ("MacRx", oss.str (), MakeBoundCallback (
+        &AsciiTraceHelper::DefaultReceiveSinkWithContext, stream));
 
   oss.str ("");
-  oss << "/NodeList/" << nodeid << "/DeviceList/" << deviceid << "/$ns3::BleNetDevice/Mac/MacTx";
-  device->TraceConnect ("MacTx", oss.str (), MakeBoundCallback (&AsciiBleMacTransmitSinkWithContext, stream));
+  oss << "/NodeList/" << nodeid << "/DeviceList/" 
+    << deviceid << "/$ns3::BleNetDevice/Mac/MacTx";
+  device->TraceConnect ("MacTx", oss.str (), 
+      MakeBoundCallback (&AsciiBleMacTransmitSinkWithContext, stream));
 
   oss.str ("");
-  oss << "/NodeList/" << nodeid << "/DeviceList/" << deviceid << "/$ns3::BleNetDevice/Mac/MacTxEnqueue";
-  device->TraceConnect ("MacTxEnqueue", oss.str (), MakeBoundCallback (&AsciiTraceHelper::DefaultEnqueueSinkWithContext, stream));
+  oss << "/NodeList/" << nodeid << "/DeviceList/" 
+    << deviceid << "/$ns3::BleNetDevice/Mac/MacTxEnqueue";
+  device->TraceConnect ("MacTxEnqueue", oss.str (), 
+      MakeBoundCallback (&AsciiTraceHelper::DefaultEnqueueSinkWithContext, 
+        stream));
 
   oss.str ("");
-  oss << "/NodeList/" << nodeid << "/DeviceList/" << deviceid << "/$ns3::BleNetDevice/Mac/MacTxDequeue";
-  device->TraceConnect ("MacTxDequeue", oss.str (), MakeBoundCallback (&AsciiTraceHelper::DefaultDequeueSinkWithContext, stream));
+  oss << "/NodeList/" << nodeid << "/DeviceList/" 
+    << deviceid << "/$ns3::BleNetDevice/Mac/MacTxDequeue";
+  device->TraceConnect ("MacTxDequeue", oss.str (), 
+      MakeBoundCallback (&AsciiTraceHelper::DefaultDequeueSinkWithContext, 
+        stream));
 
   oss.str ("");
-  oss << "/NodeList/" << nodeid << "/DeviceList/" << deviceid << "/$ns3::BleNetDevice/Mac/MacTxDrop";
-  device->TraceConnect ("MacTxDrop", oss.str (), MakeBoundCallback (&AsciiTraceHelper::DefaultDropSinkWithContext, stream));
+  oss << "/NodeList/" << nodeid << "/DeviceList/" 
+    << deviceid << "/$ns3::BleNetDevice/Mac/MacTxDrop";
+  device->TraceConnect ("MacTxDrop", oss.str (), 
+      MakeBoundCallback (&AsciiTraceHelper::DefaultDropSinkWithContext, stream));
 }
 
 ApplicationContainer 
-BleHelper::GenerateBroadcastTraffic(Ptr<RandomVariableStream> var, NodeContainer nodes, int packet_size, double start, double duration, double interval)
+BleHelper::GenerateBroadcastTraffic(Ptr<RandomVariableStream> var, 
+    NodeContainer nodes, int packet_size, double start, 
+    double duration, double interval)
 {
   ApplicationContainer apps;
   double offset = 0;
-  double offsetIncr = 1000*1000*interval/((nodes.GetN() + 1)); // interval in seconds, timeoffset in microsends (1000*1000)
+  double offsetIncr = 1000*1000*interval/((nodes.GetN() + 1)); 
+  // interval in seconds, timeoffset in microsends (1000*1000)
   for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End (); i++)
     {
-        apps.Add(GenerateBroadcastTraffic (var, *i, packet_size, start, duration, interval, offset)); 
+        apps.Add(GenerateBroadcastTraffic (
+              var, *i, packet_size, start, duration, interval, offset)); 
         offset = offset+offsetIncr;
 	}
   // Last node sends to first one
@@ -441,13 +483,15 @@ BleHelper::GenerateBroadcastTraffic(Ptr<RandomVariableStream> var, NodeContainer
 }
 
 ApplicationContainer 
-BleHelper::GenerateTraffic(Ptr<RandomVariableStream> var, NodeContainer nodes, int packet_size, double start, double duration, double interval)
+BleHelper::GenerateTraffic(Ptr<RandomVariableStream> var, NodeContainer nodes, 
+    int packet_size, double start, double duration, double interval)
 {
   ApplicationContainer apps;
   for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End ()-1; i++)
     {
         Ptr<Node> destination = *(i+1);
-        apps.Add(GenerateTraffic (var, *i, packet_size, start, duration, interval, destination)); 
+        apps.Add(GenerateTraffic (var, *i, packet_size, start, 
+              duration, interval, destination)); 
 	}
   // Last node sends to first one
   bool fullLoop = false;
@@ -457,7 +501,8 @@ BleHelper::GenerateTraffic(Ptr<RandomVariableStream> var, NodeContainer nodes, i
     NodeContainer::Iterator j = nodes.End();
     Ptr<Node> destination = *i;
     Ptr<Node> source = *(j-1);
-    apps.Add(GenerateTraffic (var, source, packet_size, start, duration, interval, destination)); 
+    apps.Add(GenerateTraffic (var, source, packet_size, start, 
+          duration, interval, destination)); 
   }
   apps.Start(Seconds(start));
   apps.Stop (Seconds(start+duration));
@@ -465,7 +510,9 @@ BleHelper::GenerateTraffic(Ptr<RandomVariableStream> var, NodeContainer nodes, i
 }
 
 Ptr<Application>
-BleHelper::GenerateTraffic(Ptr<RandomVariableStream> var, Ptr<Node> node, int packet_size, double start, double duration, double interval, Ptr<Node> destination)
+BleHelper::GenerateTraffic(Ptr<RandomVariableStream> var, Ptr<Node> node, 
+    int packet_size, double start, double duration, 
+    double interval, Ptr<Node> destination)
 {
   Ptr<BleApplication> app = CreateObject<BleApplication>();
 
@@ -501,14 +548,14 @@ BleHelper::GenerateBroadcastTraffic(Ptr<RandomVariableStream> var, Ptr<Node> nod
 
 void
 BleHelper::InstallNetworkApplication (std::string type, 
-                                           std::string n0, const AttributeValue &v0,
-                                           std::string n1, const AttributeValue &v1,
-                                           std::string n2, const AttributeValue &v2,
-                                           std::string n3, const AttributeValue &v3,
-                                           std::string n4, const AttributeValue &v4,
-                                           std::string n5, const AttributeValue &v5,
-                                           std::string n6, const AttributeValue &v6,
-                                           std::string n7, const AttributeValue &v7)
+                                std::string n0, const AttributeValue &v0,
+                                std::string n1, const AttributeValue &v1,
+                                std::string n2, const AttributeValue &v2,
+                                std::string n3, const AttributeValue &v3,
+                                std::string n4, const AttributeValue &v4,
+                                std::string n5, const AttributeValue &v5,
+                                std::string n6, const AttributeValue &v6,
+                                std::string n7, const AttributeValue &v7)
 {
   ObjectFactory factory;
   factory.SetTypeId (type);
@@ -524,7 +571,8 @@ BleHelper::InstallNetworkApplication (std::string type,
 }
 
 void
-BleHelper::CreateBroadcastLink (NetDeviceContainer c, bool scheduled, uint32_t nbConnInterval, bool collAvoid)
+BleHelper::CreateBroadcastLink (NetDeviceContainer c, 
+    bool scheduled, uint32_t nbConnInterval, bool collAvoid)
 {
   NS_LOG_FUNCTION (this);
   NS_ASSERT (c.GetN() > 1);
@@ -546,7 +594,8 @@ BleHelper::CreateBroadcastLink (NetDeviceContainer c, bool scheduled, uint32_t n
 }
 
 void
-BleHelper::CreateAllLinks (NetDeviceContainer c, bool scheduled, uint32_t nbConnInterval)
+BleHelper::CreateAllLinks (NetDeviceContainer c, 
+    bool scheduled, uint32_t nbConnInterval)
 {
   NS_LOG_FUNCTION (this);
   uint32_t nbOffset = 0;
@@ -560,7 +609,8 @@ BleHelper::CreateAllLinks (NetDeviceContainer c, bool scheduled, uint32_t nbConn
         Ptr<BleNetDevice> BleND2 = DynamicCast<BleNetDevice> (netDevice2);
         Ptr<BleLink> link2 = BleND1->GetBBManager()->CreateLinkScheduled(
           BleND2->GetBBManager(), 
-          BleLinkManager::Role::MASTER_ROLE, scheduled, nbOffset, nbConnInterval);
+          BleLinkManager::Role::MASTER_ROLE, 
+          scheduled, nbOffset, nbConnInterval);
         nbOffset++;
       }
  

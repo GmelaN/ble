@@ -18,6 +18,10 @@
  * Author: kwong yin <kwong-sang.yin@boeing.com>
  *				Brecht Reynders
  *				Stijn Geysen
+ *   Simplification from the LoRa ns-3 module lora-mac-header,
+ *   written by Brecht Reynders.
+ *   This module can be found here:
+ *   github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 
 #include "ble-mac-header.h"

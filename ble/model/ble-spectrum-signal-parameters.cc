@@ -16,6 +16,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Gary Pei <guangyu.pei@boeing.com>
+ * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *          Based on the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 #include "ble-spectrum-signal-parameters.h"
 #include <ns3/log.h>
@@ -34,7 +38,8 @@ BleSpectrumSignalParameters::BleSpectrumSignalParameters (void)
   NS_LOG_FUNCTION (this);
 }
 
-BleSpectrumSignalParameters::BleSpectrumSignalParameters (const BleSpectrumSignalParameters& p)
+BleSpectrumSignalParameters::BleSpectrumSignalParameters (
+    const BleSpectrumSignalParameters& p)
   : SpectrumSignalParameters (p)
 {
   NS_LOG_FUNCTION (this << &p);
@@ -96,17 +101,4 @@ BleSpectrumSignalParameters::GetEvent (void)
 {
   return m_event;
 }
-//
-//void
-//BleSpectrumSignalParameters::SetChannelIndex (uint8_t channelIndex)
-//{
-//  m_channelIndex = channelIndex;
-//}
-//
-//uint8_t
-//BleSpectrumSignalParameters::GetChannelIndex ()
-//{
-//  return m_channelIndex;
-//}
-//
 } // namespace ns3

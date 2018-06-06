@@ -17,7 +17,9 @@
  *
  * Author:  Brecht Reynders <brecht.reynders@esat.kuleuven.be>
  *          Stijn Geysen <stijn.geysen@student.kuleuven.be> 
- *
+ *          Based on the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 
 
@@ -65,11 +67,19 @@ namespace ns3 {
      *
      */
 
-    ApplicationContainer GenerateTraffic(Ptr <RandomVariableStream> var, NodeContainer nodes, int packet_size, double start, double duration, double interval);
-    Ptr<Application> GenerateTraffic(Ptr <RandomVariableStream> var, Ptr<Node> node, int packet_size, double start, double duration, double interval, Ptr<Node> destination);
+    ApplicationContainer GenerateTraffic(Ptr <RandomVariableStream> var, 
+        NodeContainer nodes, int packet_size, double start, 
+        double duration, double interval);
+    Ptr<Application> GenerateTraffic(Ptr <RandomVariableStream> var, 
+        Ptr<Node> node, int packet_size, double start, double duration, 
+        double interval, Ptr<Node> destination);
 
-    ApplicationContainer GenerateBroadcastTraffic(Ptr <RandomVariableStream> var, NodeContainer nodes, int packet_size, double start, double duration, double interval);
-    Ptr<Application> GenerateBroadcastTraffic(Ptr<RandomVariableStream> var, Ptr<Node> node, int packet_size, double start, double duration, double interval, double offset);
+    ApplicationContainer GenerateBroadcastTraffic(Ptr <RandomVariableStream> var, 
+        NodeContainer nodes, int packet_size, double start, 
+        double duration, double interval);
+    Ptr<Application> GenerateBroadcastTraffic(Ptr<RandomVariableStream> var, 
+        Ptr<Node> node, int packet_size, double start, 
+        double duration, double interval, double offset);
 
     /**
      * \brief Create a BLE helper in an empty state.
@@ -139,12 +149,14 @@ namespace ns3 {
      * Creates all possible links between the devices in the container
      * (fully connected mesh)
      */
-    void CreateAllLinks (NetDeviceContainer c, bool scheduled, uint32_t nbConnInterval);
+    void CreateAllLinks (NetDeviceContainer c, 
+        bool scheduled, uint32_t nbConnInterval);
 
     /*
      * Setups a broadcast link
      */
-    void CreateBroadcastLink (NetDeviceContainer c, bool scheduled, uint32_t nbConnInterval, bool collAvoid);
+    void CreateBroadcastLink (NetDeviceContainer c, 
+        bool scheduled, uint32_t nbConnInterval, bool collAvoid);
 
 /**
    * \param type the type of the model to set
@@ -168,14 +180,14 @@ namespace ns3 {
 	 * Install another network application 
    */
   void InstallNetworkApplication (std::string type,
-                   std::string n0 = "", const AttributeValue &v0 = EmptyAttributeValue (),
-                   std::string n1 = "", const AttributeValue &v1 = EmptyAttributeValue (),
-                   std::string n2 = "", const AttributeValue &v2 = EmptyAttributeValue (),
-                   std::string n3 = "", const AttributeValue &v3 = EmptyAttributeValue (),
-                   std::string n4 = "", const AttributeValue &v4 = EmptyAttributeValue (),
-                   std::string n5 = "", const AttributeValue &v5 = EmptyAttributeValue (),
-                   std::string n6 = "", const AttributeValue &v6 = EmptyAttributeValue (),
-                   std::string n7 = "", const AttributeValue &v7 = EmptyAttributeValue ());
+        std::string n0 = "", const AttributeValue &v0 = EmptyAttributeValue (),
+        std::string n1 = "", const AttributeValue &v1 = EmptyAttributeValue (),
+        std::string n2 = "", const AttributeValue &v2 = EmptyAttributeValue (),
+        std::string n3 = "", const AttributeValue &v3 = EmptyAttributeValue (),
+        std::string n4 = "", const AttributeValue &v4 = EmptyAttributeValue (),
+        std::string n5 = "", const AttributeValue &v5 = EmptyAttributeValue (),
+        std::string n6 = "", const AttributeValue &v6 = EmptyAttributeValue (),
+        std::string n7 = "", const AttributeValue &v7 = EmptyAttributeValue ());
 
 private:
 	// Disable implicit constructors
@@ -196,10 +208,12 @@ private:
 	 *
 	 * \param prefix Filename prefix to use for pcap files.
 	 * \param nd Net device for which you want to enable tracing.
-   * \param promiscuous If true capture all possible packets available at the device.
+   * \param promiscuous If true capture all possible packets 
+   *            available at the device.
    * \param explicitFilename Treat the prefix as an explicit filename if true
    */
-  virtual void EnablePcapInternal (std::string prefix, Ptr<NetDevice> nd, bool promiscuous, bool explicitFilename);
+  virtual void EnablePcapInternal (std::string prefix, Ptr<NetDevice> nd, 
+      bool promiscuous, bool explicitFilename);
 
 
 	/**
@@ -225,7 +239,8 @@ private:
   typedef std::tuple<std::string,CallbackBase> callbacktuple;
   std::list<callbacktuple > m_callbacks;
   
-  std::list<ObjectFactory> m_netApp; //!< These are the applications installed on the network server
+  std::list<ObjectFactory> m_netApp; 
+        //!< These are the applications installed on the network server
 	Ptr<const SpectrumModel> m_spectrumModel;
   std::vector<Ptr<SpectrumChannel>> m_allChannels;
   

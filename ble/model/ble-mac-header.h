@@ -15,7 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *  Author: 
+ *  Author: kwong yin <kwong-sang.yin@boeing.com> 
+ *          Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *   Simplification and adaptation 
+ *   from the LoRa ns-3 module lora-mac-header,
+ *   written by Brecht Reynders.
+ *   This module can be found here:
+ *   github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 
 #ifndef BLE_MAC_HEADER_H

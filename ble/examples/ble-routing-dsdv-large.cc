@@ -16,7 +16,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be> 
- *  Based on the LoRa Battery example from the lora-ns3 module developped by Brecht Reynders.
+ *          Based on the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
+ 
  */
 
 

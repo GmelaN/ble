@@ -231,8 +231,8 @@ namespace ns3 {
       
       if (this->GetPhy()->GetState() != BlePhy::State::IDLE)
       {
-        NS_LOG_WARN ("Phy is busy at the moment, 
-            not possible to change to TX state, current PHY State = " 
+        NS_LOG_WARN ("Phy is busy at the moment, "
+            "not possible to change to TX state, current PHY State = " 
             << this->GetPhy()->GetState());
         return false;
       }
@@ -242,15 +242,14 @@ namespace ns3 {
   void
     BleLinkController::PrepareForReception (Ptr<BleLinkManager> lm)
     {
-
       NS_LOG_FUNCTION (this);
       if (! this->GetBBManager()->GetActiveLinkManager() == 0)
       {
         if (this->GetPhy()->GetState() == BlePhy::State::IDLE)
           this->GetPhy()->PrepareRX();
         else
-          NS_LOG_WARN ("Phy is still busy, 
-              not possible to RX, current PHY state = " 
+          NS_LOG_WARN ("Phy is still busy, "
+              "not possible to RX, current PHY state = " 
               << this->GetPhy()->GetState());
       }
       else

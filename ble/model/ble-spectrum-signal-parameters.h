@@ -16,6 +16,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Gary Pei <guangyu.pei@boeing.com>
+ * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *          Based on the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 
 #ifndef BLE_SPECTRUM_SIGNAL_PARAMETERS_H
@@ -60,10 +64,6 @@ struct BleSpectrumSignalParameters : public SpectrumSignalParameters
   EventId m_event;
   EventId GetEvent (void);
   void SetEvent (EventId event);  
-
-  //void SetChannelIndex (uint8_t channelIndex);
-  //uint8_t GetChannelIndex ();
-  //uint8_t m_channelIndex;
 
 };
 

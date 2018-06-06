@@ -16,7 +16,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be> 
- *  Based on the LoRa Battery example from the lora-ns3 module developped by Brecht Reynders.
+ *          Based on the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
+ 
  */
 
 
@@ -70,19 +73,23 @@ NS_LOG_COMPONENT_DEFINE ("BleInternetstackExample");
   bool nakagami = false; // enable nakagami path loss
   bool dynamic = false; // Wether the nodes are moving yes or no
   bool scheduled = true; // Schedule the TX windows instead of random parameters.
-  bool broadcastAvoidCollisions = true; // Try to avoid 2 nodes being in advertising mode at the same time
+  bool broadcastAvoidCollisions = true; 
+    // Try to avoid 2 nodes being in advertising mode at the same time
   uint32_t nNodes = 10; // Number of nodes
-  //uint32_t nbConnInterval = 3200; // [MAX 3200]  nbConnInterval*1,25ms = size of connection interval. if nbConnInterval = 0, each link will get a random conn interval
-  uint32_t nbConnInterval = 100; // [MAX 3200]  nbConnInterval*1,25ms = size of connection interval. if nbConnInterval = 0, each link will get a random conn interval
+  uint32_t nbConnInterval = 100; 
+  // [MAX 3200]  nbConnInterval*1,25ms = size of connection interval. 
+  // if nbConnInterval = 0, each link will get a random conn interval
   int unicastInterval = 4; //!< Time between two packets from the same node 
-  int broadcastInterval = 4*nNodes; //!< Time between two packets from the same node (for good results, should be larger than nNodes*nbConnInterval(s) 
+  int broadcastInterval = 4*nNodes; 
+      //!< Time between two packets from the same node 
+      //(for good results, should be larger than nNodes*nbConnInterval(s) 
   int pingInterval = 20; // In seconds
 
   Ptr<OutputStreamWrapper> m_stream = 0; // Stream for waterfallcurve
   Ptr<UniformRandomVariable> randT = CreateObject<UniformRandomVariable> ();
 
-  std::unordered_map<uint32_t,std::tuple<uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t> > errorMap;
-  //Errormap: transmitted, received, received unique, received original, xlocation, ylocation
+  std::unordered_map<uint32_t,std::tuple<uint32_t,uint32_t,uint32_t,
+    uint32_t,uint32_t,uint32_t,uint32_t,uint32_t> > errorMap;
   std::unordered_map<uint32_t,Ptr<BleNetDevice> > deviceMap;
 
   /************************
@@ -100,7 +107,6 @@ Transmitted (const Ptr<const Packet> packet)
     header.GetSrcAddr().CopyTo(buffer);
     uint32_t addr = buffer[1];
 
-    //NS_LOG (LOG_DEBUG, "Packet transmitted  " << packet << " src addr = " << addr);
 	std::get<0>(errorMap[addr-2])++;
 }
 
@@ -142,12 +148,14 @@ ReceivedUnique (const Ptr<const Packet> packet)
 	uint8_t buffer[2];
     header.GetDestAddr().CopyTo(buffer);
     uint32_t addr = buffer[1];
-    //NS_LOG (LOG_DEBUG, "Packet unique received  " << packet << " dest addr = " << addr);
+    //NS_LOG (LOG_DEBUG, "Packet unique received  " 
+    //<< packet << " dest addr = " << addr);
 	std::get<2>(errorMap[addr-2])++;
 }
 
 	void
-ReceivedBroadcast (const Ptr<const Packet> packet, const Ptr<const BleNetDevice>  netdevice)
+ReceivedBroadcast (const Ptr<const Packet> packet, 
+    const Ptr<const BleNetDevice>  netdevice)
 {
 	Ptr<Packet> copy = packet->Copy();
 	BleMacHeader header;
@@ -155,7 +163,8 @@ ReceivedBroadcast (const Ptr<const Packet> packet, const Ptr<const BleNetDevice>
 	uint8_t buffer[2];
     netdevice->GetAddress16().CopyTo(buffer);
     uint32_t addr = buffer[1];
-    //NS_LOG (LOG_DEBUG, "Packet unique received  " << packet << " dest addr = " << addr);
+    //NS_LOG (LOG_DEBUG, "Packet unique received  " 
+    //<< packet << " dest addr = " << addr);
 	std::get<4>(errorMap[addr-2])++;
 }
 
@@ -192,16 +201,6 @@ int main (int argc, char** argv)
   {
     helper.EnableLogComponents();
   }
-  
- // LogComponentEnable ("Ipv4AddressHelper", LOG_LEVEL_ALL);
- // LogComponentEnable ("AodvRoutingProtocol", LOG_LEVEL_ALL);
- // LogComponentEnable ("AodvNeighbors", LOG_LEVEL_ALL);
- // LogComponentEnable ("AodvRequestQueue", LOG_LEVEL_ALL);
- // LogComponentEnable ("AodvRoutingTable", LOG_LEVEL_ALL);
- // LogComponentEnable ("GlobalRoutingHelper", LOG_LEVEL_ALL);
- // LogComponentEnable ("TraceHelper", LOG_LEVEL_ALL);
-    
-
 
   Packet::EnablePrinting ();
   Packet::EnableChecking ();
@@ -213,9 +212,18 @@ int main (int argc, char** argv)
   AsciiTraceHelper ascii;
   //helper.EnableAsciiAll (ascii.CreateFileStream ("example-ble.tr"));
   m_stream = ascii.CreateFileStream ("example-routing.csv");
-  *m_stream->GetStream() << "#Scenario " << (int)nNodes <<  " nodes on a square field with side " << length << " meter" << " TX window scheduling enabled: " << scheduled << ", connection interval = " << nbConnInterval*1.25 << " millisec, (0 = random) " << std::endl;
-  // print Iteration, ID, transmitted, received, received unique, received at closest gateway, x coords, y coords, get average amount of retransmissions, get average time of transmissions, number of missed messages, amount of received messages.
-  *m_stream->GetStream() << "Iteration, ID, transmitted, received, received unique, received error, broadcast received, TX Windows Skipped, x coords, y coords " <<std::endl;
+  *m_stream->GetStream() << "#Scenario " << (int)nNodes 
+    <<  " nodes on a square field with side " << length << " meter" 
+    << " TX window scheduling enabled: " << scheduled 
+    << ", connection interval = " << nbConnInterval*1.25 
+    << " millisec, (0 = random) " << std::endl;
+  // print Iteration, ID, transmitted, received, received unique, 
+  // received at closest gateway, x coords, y coords, 
+  // get average amount of retransmissions, get average time of transmissions, 
+  // number of missed messages, amount of received messages.
+  *m_stream->GetStream() << "Iteration, ID, transmitted, received, "
+    "received unique, received error, broadcast received, TX Windows Skipped, "
+    "x coords, y coords " <<std::endl;
   for (uint8_t iterationI=0;iterationI<nbIterations;iterationI++){
 		std::cout << "Iteration: " << (int)iterationI << std::endl;
  
@@ -232,7 +240,8 @@ int main (int argc, char** argv)
     MobilityHelper mobility;
     Ptr<ListPositionAllocator> nodePositionList = 
       CreateObject<ListPositionAllocator> ();
-    for (uint32_t nodePositionsAssigned = 0; nodePositionsAssigned < nNodes; nodePositionsAssigned++)
+    for (uint32_t nodePositionsAssigned = 0; 
+        nodePositionsAssigned < nNodes; nodePositionsAssigned++)
     {
       double x,y;
       x = randT->GetInteger(0,length);
@@ -251,23 +260,6 @@ int main (int argc, char** argv)
     NetDeviceContainer bleNetDevices;
     bleNetDevices = helper.Install (bleDeviceNodes);
 
-    // Set addresses
-   // NS_LOG (LOG_INFO, "Set addresses");
-   // for (uint32_t nodeI = 0; nodeI < nNodes; nodeI++)
-   // {
-   //   //std::string s = std::to_string (std::hex(nodeI+2));
-
-   //   std::stringstream stream;
-   //   stream << std::hex << nodeI+2;
-   //   std::string s( stream.str());
-   //   while (s.size() < 4)
-   //     s.insert(0,1,'0');
-   //   s.insert(2,1,':');
-   //   char const * buffer = s.c_str();
-   //   DynamicCast<BleNetDevice>(bleNetDevices.Get(nodeI))->SetAddress (Mac16Address (buffer));
-   //   NS_LOG (LOG_INFO, "address = " << DynamicCast<BleNetDevice>(bleNetDevices.Get(nodeI))->GetAddress ());
-   // }
-
     // Install Internet stack
     AodvHelper aodv;
     InternetStackHelper stack;
@@ -278,17 +270,7 @@ int main (int argc, char** argv)
     aodv.Set("NextHopWait", TimeValue(Seconds(4)));
     stack.SetRoutingHelper (aodv);
     stack.Install (bleDeviceNodes);
-
- //   SixLowPanHelper sixlowpan;
- //   sixlowpan.SetDeviceAttribute ("ForceEtherType", BooleanValue (true));
-
- //   NetDeviceContainer six1 = sixlowpan.Install (bleNetDevices);
- //   Ipv6AddressHelper ipv6;
- //   ipv6.SetBase (Ipv6Address ("2001:1::"), Ipv6Prefix (64));
- //   Ipv6InterfaceContainer interfaces = ipv6.Assign (six1);
- //   interfaces.SetForwarding (1, true);
- //   interfaces.SetDefaultRouteInAllNodes (0);
-    
+   
     Ipv4AddressHelper address;
     address.SetBase ("10.0.0.0", "255.0.0.0");
 
@@ -297,22 +279,27 @@ int main (int argc, char** argv)
 
     if (printRoutes)
     {
-      Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ("aodv.routes", std::ios::out);
+      Ptr<OutputStreamWrapper> routingStream = 
+        Create<OutputStreamWrapper> ("aodv.routes", std::ios::out);
       aodv.PrintRoutingTableAllAt (Seconds (8), routingStream);
     }
 
     // Create links between the nodes
     helper.CreateAllLinks (bleNetDevices, scheduled, nbConnInterval);
-    helper.CreateBroadcastLink (bleNetDevices, scheduled, nbConnInterval, broadcastAvoidCollisions);
+    helper.CreateBroadcastLink (
+        bleNetDevices, scheduled, nbConnInterval, broadcastAvoidCollisions);
    
     NS_LOG (LOG_INFO, " Generate data ");
-    //ApplicationContainer apps1 = helper.GenerateBroadcastTraffic (randT, bleDeviceNodes, pktsize, 0, packetSendDuration, broadcastInterval);
-    //ApplicationContainer apps2 = helper.GenerateTraffic (randT, bleDeviceNodes, pktsize, 0, packetSendDuration, unicastInterval);
+    //ApplicationContainer apps1 = 
+    //      helper.GenerateBroadcastTraffic (
+    //      randT, bleDeviceNodes, pktsize, 0, 
+    //      packetSendDuration, broadcastInterval);
+    //ApplicationContainer apps2 = helper.GenerateTraffic (
+    //      randT, bleDeviceNodes, pktsize, 0, 
+    //      packetSendDuration, unicastInterval);
 
     V4PingHelper ping (interfaces.GetAddress (nNodes-1));
 
-   // Ping6Helper ping; // (interfaces.GetAddress (nNodes-1));
-   // ping.SetLocal (interfaces.GetAddress (0,1));
     ping.SetAttribute ("Verbose", BooleanValue (true));
     ping.SetAttribute ("Interval", TimeValue (Seconds (pingInterval)));
 
@@ -320,28 +307,34 @@ int main (int argc, char** argv)
     p.Start (Seconds (10));
     p.Stop (Seconds (duration) - Seconds (0.001));
 
-    // Move a node to see effect on routing
-   // Ptr<Node> node = bleDeviceNodes.Get (nNodes/2);
-   // Ptr<MobilityModel> mob = node->GetObject<MobilityModel> ();
-   // Simulator::Schedule (Seconds (duration/3), &MobilityModel::SetPosition, mob, Vector (1e5, 1e5, 1e5));
-    
      // Hookup functions to measure performance
 
     for (uint32_t i=0; i< bleNetDevices.GetN(); i++)
     {
       uint8_t buffer[2];
-      Mac16Address::ConvertFrom(bleNetDevices.Get(i)->GetAddress()).CopyTo(buffer);
+      Mac16Address::ConvertFrom(
+          bleNetDevices.Get(i)->GetAddress()).CopyTo(buffer);
       uint32_t addr = buffer[1];  
       deviceMap[addr ]=DynamicCast<BleNetDevice>(bleNetDevices.Get(i));
-      uint32_t x  = bleNetDevices.Get(i)->GetNode()->GetObject<MobilityModel>()->GetPosition ().x;
-      uint32_t y  = bleNetDevices.Get(i)->GetNode()->GetObject<MobilityModel>()->GetPosition ().y;
+      uint32_t x  = bleNetDevices.Get(i)->GetNode()
+        ->GetObject<MobilityModel>()->GetPosition ().x;
+      uint32_t y  = bleNetDevices.Get(i)->GetNode()
+        ->GetObject<MobilityModel>()->GetPosition ().y;
       errorMap[addr-2] = std::make_tuple (0,0,0,0,0,0,x,y);
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacTx",MakeCallback(&Transmitted));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacRx",MakeCallback(&ReceivedUnique));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacRxBroadcast",MakeCallback(&ReceivedBroadcast));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacPromiscRx",MakeCallback(&Received));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacRxError",MakeCallback(&ReceivedError));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("TXWindowSkipped",MakeCallback(&TXWindowSkipped));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacTx",MakeCallback(&Transmitted));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacRx",MakeCallback(&ReceivedUnique));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacRxBroadcast",
+            MakeCallback(&ReceivedBroadcast));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacPromiscRx",MakeCallback(&Received));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacRxError",MakeCallback(&ReceivedError));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("TXWindowSkipped",
+            MakeCallback(&TXWindowSkipped));
     }
 
     NS_LOG (LOG_INFO, "Simulator will run now");
@@ -352,13 +345,22 @@ int main (int argc, char** argv)
     for (uint32_t i=0; i< bleNetDevices.GetN(); i++)
     {
             uint8_t buffer[2];
-            Mac16Address::ConvertFrom(bleNetDevices.Get(i)->GetAddress()).CopyTo(buffer);
+            Mac16Address::ConvertFrom(
+                bleNetDevices.Get(i)->GetAddress()).CopyTo(buffer);
             uint32_t addr = buffer[1];  
-            Ptr<BleNetDevice> netdevice =DynamicCast<BleNetDevice>(bleNetDevices.Get(i));
+            Ptr<BleNetDevice> netdevice =
+              DynamicCast<BleNetDevice>(bleNetDevices.Get(i));
             NS_LOG (LOG_DEBUG, "nd = " << netdevice << " addr = " << addr);
-			std::tuple<uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t> tuple = errorMap[i];
-			// print iteration, ID, transmitted, received, received unique, x coords, y coords.
-			*m_stream->GetStream() << (int)iterationI << "," << netdevice->GetAddress16() << "," << std::get<0>(tuple)<< "," << std::get<1>(tuple) << "," <<   std::get<2>(tuple) <<  "," << std::get<3>(tuple) << "," << std::get<4>(tuple) << "," << std::get<5>(tuple)  << "," << std::get<6>(tuple) << "," << std::get<7>(tuple) << std::endl;
+			std::tuple<uint32_t,uint32_t,uint32_t,uint32_t,
+              uint32_t,uint32_t,uint32_t,uint32_t> tuple = errorMap[i];
+			// print iteration, ID, transmitted, received, 
+            // received unique, x coords, y coords.
+			*m_stream->GetStream() << (int)iterationI << "," 
+              << netdevice->GetAddress16() << "," << std::get<0>(tuple)
+              << "," << std::get<1>(tuple) << "," <<   std::get<2>(tuple) 
+              <<  "," << std::get<3>(tuple) << "," << std::get<4>(tuple) 
+              << "," << std::get<5>(tuple)  << "," << std::get<6>(tuple) 
+              << "," << std::get<7>(tuple) << std::endl;
 		
     }
     errorMap.clear();

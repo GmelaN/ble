@@ -17,6 +17,9 @@
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *          Based on the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 
 #include "ble-phy.h"
@@ -63,7 +66,9 @@ namespace ns3 {
 		m_temperature = 273;
 		m_bandWidth = BANDWIDTH; // 100;
 		m_antenna = 0;
-		m_bitrate = 1000000 * 4; // times 4 to allow for larger packets (necessary for ipv4 routing protocols)  
+		m_bitrate = 1000000 * 4; 
+                // times 4 to allow for larger packets 
+                // (necessary for ipv4 routing protocols)  
 		m_mobility = 0;
 		m_channelIndex = 20;
 		m_receiver = false;
@@ -74,7 +79,8 @@ namespace ns3 {
 		m_random->SetAttribute ("Min",DoubleValue(0.0));
 		m_random->SetAttribute ("Max",DoubleValue(1.0));
 		m_equivalentNoiseTemperature = 293;
-		m_power = 0.010; // BLE specifications: min output power: 0.01 mW, max 10 mW
+		m_power = 0.010; 
+                // BLE specifications: min output power: 0.01 mW, max 10 mW
 		m_errorModel =Create<BleErrorModel> (); 
 		InitTxPowerSpectralDensity (m_channelIndex,m_power); //0.001);
 		m_receivingPower = Create<SpectrumValue> (m_txPsd->GetSpectrumModel ());
@@ -216,7 +222,8 @@ namespace ns3 {
 		}
 
     void
-		BlePhy::SetTransmissionEndCallback (Callback<void, Ptr<const Packet> > callback)
+		BlePhy::SetTransmissionEndCallback (Callback<void, 
+            Ptr<const Packet> > callback)
 		{
 			NS_LOG_FUNCTION (this);
 			m_transmissionEnd = callback;
@@ -250,7 +257,8 @@ namespace ns3 {
 			if(this->GetState() == BlePhy::State::TX)
 			{
               this->ChangeState(BlePhy::State::TX_BUSY);
-				Ptr<BleSpectrumSignalParameters> txParams = Create<BleSpectrumSignalParameters> ();
+				Ptr<BleSpectrumSignalParameters> txParams = 
+                  Create<BleSpectrumSignalParameters> ();
 				txParams->duration = Seconds((packet->GetSize()-1)*8/m_bitrate);
 				txParams->packet = packet;
 				txParams->txPhy = GetObject<SpectrumPhy> ();
@@ -292,9 +300,11 @@ namespace ns3 {
 				UpdateBer();
 				NS_LOG_FUNCTION (this);
 				// do something with params
-				Ptr<BleSpectrumSignalParameters> sfParams = DynamicCast<BleSpectrumSignalParameters> (params);
+				Ptr<BleSpectrumSignalParameters> sfParams = 
+                  DynamicCast<BleSpectrumSignalParameters> (params);
 				// add power to received power
-				Simulator::Schedule(params->duration,&BlePhy::EndNoise,this,params->psd);
+				Simulator::Schedule(params->duration,
+                    &BlePhy::EndNoise,this,params->psd);
 				*m_receivingPower += *params->psd;
 				//m_ReceptionStart();
 				if (sfParams != 0){
@@ -304,13 +314,14 @@ namespace ns3 {
 						m_params.push_back(sfParams);
 						sfParams->SetBer(0);
 						//generate ending event
-						//m_events =Simulator::Schedule(sfParams->duration,&BlePhy::EndRx,this,sfParams);//[channel]
-						sfParams->SetEvent(Simulator::Schedule(sfParams->duration,&BlePhy::EndRx,this,sfParams));
+						sfParams->SetEvent(Simulator::Schedule(
+                              sfParams->duration,&BlePhy::EndRx,this,sfParams));
 					}
 					else {
 						//check if there is a collision
 						sfParams->SetBer(0);
-						sfParams->SetEvent(Simulator::Schedule(sfParams->duration,&BlePhy::EndRx,this,sfParams));  
+						sfParams->SetEvent(Simulator::Schedule(
+                              sfParams->duration,&BlePhy::EndRx,this,sfParams));  
 						for (auto &it : m_params)
 						{
 							if (it->GetChannel() == channel){
@@ -319,18 +330,24 @@ namespace ns3 {
                                 // 11 dB ==> 12.6
                                 double ccrejection = 12.6;
 
-								//if there is a collision, No problem if 6dB power difference, but other is corrupted;
-								if (Integral(*it->psd)*ccrejection < Integral(*sfParams->psd)){
+								//if there is a collision, 
+                                //  No problem if 6dB power difference, 
+                                //  but other is corrupted;
+								if (Integral(*it->psd)*ccrejection 
+                                    < Integral(*sfParams->psd)){
 									it->SetBer(10);
 								}
 								else{
 									//if 6dB lower power, there is no detection
-									if (Integral(*it->psd) > ccrejection*Integral(*sfParams->psd)){
+									if (Integral(*it->psd) 
+                                        > ccrejection*Integral(*sfParams->psd)){
 										sfParams->SetBer(10);
 									}
 									else
 									{
-										// in all the other cases, the signal gets not detected, but the other packet is corrupted.
+										// in all the other cases, 
+                                        // the signal gets not detected, 
+                                        // but the other packet is corrupted.
 										sfParams->SetBer(10);
 										it->SetBer(10);
 									}
@@ -343,7 +360,8 @@ namespace ns3 {
 			}
             else
             {
-              NS_LOG_INFO ("Cannot start receiving without being in receive state");
+              NS_LOG_INFO ("Cannot start "
+                  "receiving without being in receive state");
             }
 		}
 
@@ -455,7 +473,8 @@ namespace ns3 {
         this->ChangeState(TX);
         SetReceiverMode (false);
         // Schedule TX on event
-        Simulator::Schedule(MicroSeconds(TX_PREP_TIME), &BlePhy::StartTx, this, packet);
+        Simulator::Schedule(MicroSeconds(TX_PREP_TIME), 
+            &BlePhy::StartTx, this, packet);
         // Manage battery?
         return true;
       }
@@ -476,7 +495,8 @@ namespace ns3 {
       if (m_currentState == RX || m_currentState == IDLE)
       {
         this->ChangeState(RX);
-        Simulator::Schedule(MicroSeconds(RX_PREP_TIME), &BlePhy::ChangeState, this, BlePhy::State::RX_BUSY);
+        Simulator::Schedule(MicroSeconds(RX_PREP_TIME), 
+            &BlePhy::ChangeState, this, BlePhy::State::RX_BUSY);
         SetReceiverMode (true);
         // Reset look for preamble timer
         return true;
@@ -512,21 +532,21 @@ namespace ns3 {
 				Ptr<SpectrumValue> noise = m_receivingPower->Copy();
 				*noise -= *i->psd;
 				uint32_t channel = i->GetChannel();
-				double snr = (*i->psd)[channel+3]/((*noise)[channel+3]+m_k*m_temperature);//[i]  0->i
+				double snr = 
+                  (*i->psd)[channel+3]/((*noise)[channel+3]+m_k*m_temperature);
 				//getBER
 				long double berEs = m_errorModel->GetBER (snr);
-				//double per = 1-pow(1-m_bitErrors/length,length); // [params-GetChannel()]
-				int bits = (timeNow - m_lastCheck)*m_bitrate / 4; // Divided by 4 to compensate for higher bitrate (see other remark at bitrate instantiation)
-				//std::cout << Simulator::Now().GetSeconds() << " " << (*m_receivingPower)[channel+3] << " " << (*noise)[channel+3] << " " << (*i->psd)[3+channel]<<" " << snr << " " << berEs  << " " << channel <<  std::endl;
+				int bits = (timeNow - m_lastCheck)*m_bitrate / 4; 
+                // Divided by 4 to compensate for higher bitrate 
+                //  (see other remark at bitrate instantiation)
 				for ( int it = 0; it < bits; it++)
 				{
 					if(m_random->GetValue()<berEs)
 					{
 						//calculate numbers of biterrors	
-						m_bitErrors += 1;//berEs * (timeNow-m_lastCheck) * m_bitrate; //[i]
+						m_bitErrors += 1;
 					}
 				}
-				// }
 				i->SetBer(m_bitErrors+i->GetBer());
               }
 			}

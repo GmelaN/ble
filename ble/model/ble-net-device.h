@@ -16,6 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be> 
+ *   Adaptation 
+ *   from the LoRa ns-3 module lora-net-device,
+ *   written by Brecht Reynders.
+ *   This module can be found here:
+ *   github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 
 #ifndef BLE_NET_DEVICE_H
@@ -172,8 +177,10 @@ public:
   virtual bool IsBridge (void) const;
   virtual bool Send (Ptr<Packet> packet, uint16_t protocolNumber);
   virtual bool Send (Ptr<Packet> packet, const Address& dest);
-  virtual bool Send (Ptr<Packet> packet, const Address& dest, uint16_t protocolNumber);
-  virtual bool SendFrom (Ptr<Packet> packet, const Address& source, const Address& dest,
+  virtual bool Send (Ptr<Packet> packet, const Address& dest, 
+      uint16_t protocolNumber);
+  virtual bool SendFrom (Ptr<Packet> packet, 
+      const Address& source, const Address& dest,
                          uint16_t protocolNumber);
   virtual Ptr<Node> GetNode (void) const;
   virtual void SetNode (Ptr<Node> node);
@@ -215,7 +222,8 @@ protected:
   TracedCallback<Ptr<const Packet> > m_macTxDropTrace;
   TracedCallback<Ptr<const Packet> > m_macPromiscRxTrace;
   TracedCallback<Ptr<const Packet> > m_macRxTrace;
-  TracedCallback<Ptr<const Packet>, Ptr<const BleNetDevice> > m_macRxBroadcastTrace;
+  TracedCallback<Ptr<const Packet>, 
+    Ptr<const BleNetDevice> > m_macRxBroadcastTrace;
   TracedCallback<Ptr<const Packet> > m_macRxErrorTrace;
   TracedCallback<Ptr<const BleNetDevice> > m_macTXWindowSkipped;
   
@@ -227,9 +235,12 @@ protected:
   NetDevice::PromiscReceiveCallback m_promiscRxCallback;
 	
 // Associated objects
-  Ptr<BleBBManager> m_bbManager; //<! the BroadBand manager associated to this device.
-  Ptr<BleLinkController> m_linkController; //<! the link controller associated to this device.
-  Ptr<BleLinkManager> m_linkManager; //<! the link manager associated to this device.
+  Ptr<BleBBManager> m_bbManager; 
+  //<! the BroadBand manager associated to this device.
+  Ptr<BleLinkController> m_linkController; 
+  //<! the link controller associated to this device.
+  Ptr<BleLinkManager> m_linkManager; 
+  //<! the link manager associated to this device.
 	
 
 };

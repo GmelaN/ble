@@ -77,7 +77,9 @@ namespace ns3 {
     {
       NS_LOG_FUNCTION (this);
       m_channel = c;
-      // For all devices in this link (this is a hack for now //if time allows / in the future: change this way of setting channel)
+      // For all devices in this link (this is a hack for now 
+      // //if time allows / in the future: 
+      //    change this way of setting channel)
 
       for (auto v : this->GetLinkedDevices()) // Devices are BBM
       {

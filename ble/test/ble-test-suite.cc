@@ -1,4 +1,27 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * Copyright (c) 2018 KULeuven 
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *          The last testcase is based on the the battery example 
+ *          from the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
+ */
+
 
 // Include a header file from your module to test.
 #include <ns3/log.h>
@@ -69,10 +92,12 @@ BleTestCase1::DoRun (void)
   // A wide variety of test macros are available in src/core/test.h
   NS_TEST_ASSERT_MSG_EQ (true, true, "true doesn't equal true for some reason");
   // Use this one for floating point comparisons
-  NS_TEST_ASSERT_MSG_EQ_TOL (0.01, 0.01, 0.001, "Numbers are not equal within tolerance");
+  NS_TEST_ASSERT_MSG_EQ_TOL (0.01, 0.01, 0.001, 
+      "Numbers are not equal within tolerance");
   
   // Failing test case deiliberately:
-  //NS_TEST_ASSERT_MSG_EQ (true, false, "true doesn't equal false for some reason");
+  //NS_TEST_ASSERT_MSG_EQ (true, false, 
+  //"true doesn't equal false for some reason");
 }
 
 // This my first real test case: case2.
@@ -120,7 +145,8 @@ BleTestCase2::DoRun (void)
   // A wide variety of test macros are available in src/core/test.h
   NS_TEST_ASSERT_MSG_EQ (true, true, "true doesn't equal true for some reason");
   // Use this one for floating point comparisons
-  NS_TEST_ASSERT_MSG_EQ_TOL (0.01, 0.01, 0.001, "Numbers are not equal within tolerance");
+  NS_TEST_ASSERT_MSG_EQ_TOL (
+      0.01, 0.01, 0.001, "Numbers are not equal within tolerance");
 
   // Enable logging
   BleHelper helper;
@@ -141,9 +167,12 @@ BleTestCase2::DoRun (void)
   // 
   // A propagation and delaymodel can be assigned to the channel
   
-  Ptr<SingleModelSpectrumChannel> channel = CreateObject<SingleModelSpectrumChannel> ();
-  Ptr<LogDistancePropagationLossModel> propModel = CreateObject<LogDistancePropagationLossModel> ();
-  Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
+  Ptr<SingleModelSpectrumChannel> channel = 
+    CreateObject<SingleModelSpectrumChannel> ();
+  Ptr<LogDistancePropagationLossModel> propModel = 
+    CreateObject<LogDistancePropagationLossModel> ();
+  Ptr<ConstantSpeedPropagationDelayModel> delayModel = 
+    CreateObject<ConstantSpeedPropagationDelayModel> ();
   channel->AddPropagationLossModel (propModel);
   channel->SetPropagationDelayModel (delayModel);
   helper.SetChannel (channel);
@@ -151,34 +180,48 @@ BleTestCase2::DoRun (void)
   NetDeviceContainer bleNetDevices;
   bleNetDevices = helper.Install (bleDeviceNodes);
 
-  DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->SetAddress (Mac16Address ("00:01"));
-  DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->SetAddress (Mac16Address ("00:02"));
+  DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->SetAddress (
+      Mac16Address ("00:01"));
+  DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->SetAddress (
+      Mac16Address ("00:02"));
 
   NS_LOG (LOG_INFO, "Setup done, creation of links. Empty link first");
   
   // Simulator code goes here:
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->LinkExists(DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress16()), false, "Dev0 has a link to the address of dev1, but that is not possible.");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))
+      ->GetBBManager()->LinkExists(
+        DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress16()), 
+      false, "Dev0 has a link to the address of dev1, but that is not possible.");
   
   NS_LOG (LOG_INFO, "First fase done, now point to point link");
   // Second link: create a link between the 2 nodes using the CreateLink function
-  Ptr<BleLink> link2 = DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->CreateLink(
+  Ptr<BleLink> link2 = DynamicCast<BleNetDevice>(
+      bleNetDevices.Get(0))->GetBBManager()->CreateLink(
       DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetBBManager(), 
       BleLinkManager::Role::MASTER_ROLE);
   
   NS_TEST_ASSERT_MSG_EQ (true, true, "true doesn't equal true for some reason");
 
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->LinkExists(link2), true, "Addition of link 2 on dev0 failed");
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetBBManager()->LinkExists(link2), true, "Addition of link 2 on dev1 failed");
-  NS_TEST_ASSERT_MSG_EQ (link2->GetLinkType(), BleLink::LinkType::POINT_TO_POINT, "Link 2 is not a POINT_TO_POINT link");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))
+      ->GetBBManager()->LinkExists(link2), true, 
+      "Addition of link 2 on dev0 failed");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(
+        bleNetDevices.Get(1))->GetBBManager()->LinkExists(link2), 
+      true, "Addition of link 2 on dev1 failed");
+  NS_TEST_ASSERT_MSG_EQ (link2->GetLinkType(), 
+      BleLink::LinkType::POINT_TO_POINT, "Link 2 is not a POINT_TO_POINT link");
   
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->LinkExists(
+  NS_TEST_ASSERT_MSG_EQ (
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->LinkExists(
         DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress16()), 
       true, "Dev0 has no link to the address of dev1");
 
   // At this point, creating a link at startup works, let's try to create a link 
   // during simulation.
-  Simulator::Schedule(MilliSeconds(10), &BleBBManager::CreateLink, DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager(), 
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetBBManager(), BleLinkManager::Role::SLAVE_ROLE);
+  Simulator::Schedule(MilliSeconds(10), &BleBBManager::CreateLink, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager(), 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetBBManager(), 
+      BleLinkManager::Role::SLAVE_ROLE);
   // Result: 
   //  dev0 should be involved in 2 links now
   //  dev1 should be involved in 2 links now
@@ -187,7 +230,9 @@ BleTestCase2::DoRun (void)
   // Go step further: send a packet.
   Ptr<Packet> p0 = Create<Packet> (50); // 50 bytes of dummy data
   uint16_t protocolNb = 1;
-  Simulator::Schedule(MilliSeconds(30), &BleNetDevice::SendFrom, DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p0, DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
+  Simulator::Schedule(MilliSeconds(30), &BleNetDevice::SendFrom, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p0, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
       DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress(), protocolNb);
 
   NS_LOG (LOG_INFO, "Simulator will run now");
@@ -195,8 +240,12 @@ BleTestCase2::DoRun (void)
   Simulator::Stop(MilliSeconds(40));
   Simulator::Run ();
 
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->CountLinks(), 2, "Dev 0 is not involved in 2 links");
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetBBManager()->CountLinks(), 2, "Dev 1 is not involved in 2 links");
+  NS_TEST_ASSERT_MSG_EQ (
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->CountLinks(), 
+      2, "Dev 0 is not involved in 2 links");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(
+        bleNetDevices.Get(1))->GetBBManager()->CountLinks(), 
+      2, "Dev 1 is not involved in 2 links");
   
   Simulator::Destroy ();
 }
@@ -215,7 +264,9 @@ private:
 
 // Add some help text to this case to describe what it is intended to test
 BleTestCase3::BleTestCase3()
-  : TestCase ("Ble test case creates two Ble nodes and sends multiple packets between the nodes")
+  : TestCase (
+      "Ble test case creates two Ble nodes and "
+      "sends multiple packets between the nodes")
 {
   //set initial parameter values
   //NS_LOG_INFO ("This message rests inside the test case 2 constructor.");
@@ -245,7 +296,8 @@ BleTestCase3::DoRun (void)
   // A wide variety of test macros are available in src/core/test.h
   NS_TEST_ASSERT_MSG_EQ (true, true, "true doesn't equal true for some reason");
   // Use this one for floating point comparisons
-  NS_TEST_ASSERT_MSG_EQ_TOL (0.01, 0.01, 0.001, "Numbers are not equal within tolerance");
+  NS_TEST_ASSERT_MSG_EQ_TOL (0.01, 0.01, 
+      0.001, "Numbers are not equal within tolerance");
 
   // Enable logging
   BleHelper helper;
@@ -253,7 +305,8 @@ BleTestCase3::DoRun (void)
 
   //LogComponentEnable ("Channel", LOG_LEVEL_INFO);
 
-  NS_LOG (LOG_INFO, "Ble Test Case 3 (creation of 2 nodes and send multiple packets) setup starts now");
+  NS_LOG (LOG_INFO, "Ble Test Case 3 (creation of 2 nodes and "
+      "send multiple packets) setup starts now");
   // Test setup:
   // Two BLE nodes will be created.
   // Next an artificial link will be created,
@@ -266,9 +319,12 @@ BleTestCase3::DoRun (void)
   // 
   // A propagation and delaymodel can be assigned to the channel
   
-  Ptr<SingleModelSpectrumChannel> channel = CreateObject<SingleModelSpectrumChannel> ();
-  Ptr<LogDistancePropagationLossModel> propModel = CreateObject<LogDistancePropagationLossModel> ();
-  Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
+  Ptr<SingleModelSpectrumChannel> channel = 
+    CreateObject<SingleModelSpectrumChannel> ();
+  Ptr<LogDistancePropagationLossModel> propModel = 
+    CreateObject<LogDistancePropagationLossModel> ();
+  Ptr<ConstantSpeedPropagationDelayModel> delayModel = 
+    CreateObject<ConstantSpeedPropagationDelayModel> ();
   channel->AddPropagationLossModel (propModel);
   channel->SetPropagationDelayModel (delayModel);
   helper.SetChannel (channel);
@@ -276,50 +332,72 @@ BleTestCase3::DoRun (void)
   NetDeviceContainer bleNetDevices;
   bleNetDevices = helper.Install (bleDeviceNodes);
 
-  DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->SetAddress (Mac16Address ("00:01"));
-  DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->SetAddress (Mac16Address ("00:02"));
+  DynamicCast<BleNetDevice>(bleNetDevices.Get(0))
+    ->SetAddress (Mac16Address ("00:01"));
+  DynamicCast<BleNetDevice>(bleNetDevices.Get(1))
+    ->SetAddress (Mac16Address ("00:02"));
 
   NS_LOG (LOG_INFO, "Setup done, creation of links. Empty link first");
   
   // Simulator code goes here:
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->LinkExists(DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress16()), false, "Dev0 has a link to the address of dev1, but that is not possible.");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))
+      ->GetBBManager()->LinkExists(DynamicCast<BleNetDevice>(
+          bleNetDevices.Get(1))->GetAddress16()), false, 
+      "Dev0 has a link to the address of dev1, but that is not possible.");
   
   NS_LOG (LOG_INFO, "First fase done, now point to point link");
   // Second link: create a link between the 2 nodes using the CreateLink function
-  Ptr<BleLink> link2 = DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->CreateLink(
+  Ptr<BleLink> link2 = DynamicCast<BleNetDevice>(
+      bleNetDevices.Get(0))->GetBBManager()->CreateLink(
       DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetBBManager(), 
       BleLinkManager::Role::MASTER_ROLE);
   
   NS_TEST_ASSERT_MSG_EQ (true, true, "true doesn't equal true for some reason");
 
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->LinkExists(link2), true, "Addition of link 2 on dev0 failed");
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetBBManager()->LinkExists(link2), true, "Addition of link 2 on dev1 failed");
-  NS_TEST_ASSERT_MSG_EQ (link2->GetLinkType(), BleLink::LinkType::POINT_TO_POINT, "Link 2 is not a POINT_TO_POINT link");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))
+      ->GetBBManager()->LinkExists(link2), true, 
+      "Addition of link 2 on dev0 failed");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(1))
+      ->GetBBManager()->LinkExists(link2), true, 
+      "Addition of link 2 on dev1 failed");
+  NS_TEST_ASSERT_MSG_EQ (link2->GetLinkType(), BleLink::LinkType::POINT_TO_POINT, 
+      "Link 2 is not a POINT_TO_POINT link");
   
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->LinkExists(
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))
+      ->GetBBManager()->LinkExists(
         DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress16()), 
       true, "Dev0 has no link to the address of dev1");
 
   // Go step further: send a packet.
   Ptr<Packet> p0 = Create<Packet> (50); // 50 bytes of dummy data
   uint16_t protocolNb = 1;
-  Simulator::Schedule(MilliSeconds(10), &BleNetDevice::SendFrom, DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p0, DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
+  Simulator::Schedule(MilliSeconds(10), &BleNetDevice::SendFrom, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p0, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
       DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress(), protocolNb);
   
   // Step 2: 2 packets at the same time from the same node.
   Ptr<Packet> p1 = Create<Packet> (4);
   Ptr<Packet> p2 = Create<Packet> (4);
-  Simulator::Schedule(MilliSeconds(30), &BleNetDevice::SendFrom, DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p1, DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
+  Simulator::Schedule(MilliSeconds(30), &BleNetDevice::SendFrom, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p1, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
       DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress(), protocolNb);
-  Simulator::Schedule(MilliSeconds(30), &BleNetDevice::SendFrom, DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p2, DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
+  Simulator::Schedule(MilliSeconds(30), &BleNetDevice::SendFrom, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p2, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
       DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress(), protocolNb);
 
   // Step 3: 2 packets from different nodes.
   Ptr<Packet> p3 = Create<Packet> (4);
   Ptr<Packet> p4 = Create<Packet> (4);
-  Simulator::Schedule(MilliSeconds(40), &BleNetDevice::SendFrom, DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p3, DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
+  Simulator::Schedule(MilliSeconds(40), &BleNetDevice::SendFrom, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0)), p3, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(),
       DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress(), protocolNb);
-  Simulator::Schedule(MilliSeconds(40), &BleNetDevice::SendFrom, DynamicCast<BleNetDevice>(bleNetDevices.Get(1)), p4, DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress(),
+  Simulator::Schedule(MilliSeconds(40), &BleNetDevice::SendFrom, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(1)), p4, 
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetAddress(),
       DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetAddress(), protocolNb);
 
 
@@ -328,8 +406,10 @@ BleTestCase3::DoRun (void)
   Simulator::Stop(MilliSeconds(50));
   Simulator::Run ();
 
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))->GetBBManager()->CountLinks(), 1, "Dev 0 is not involved in 1 links");
-  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(1))->GetBBManager()->CountLinks(), 1, "Dev 1 is not involved in 1 links");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(0))
+      ->GetBBManager()->CountLinks(), 1, "Dev 0 is not involved in 1 links");
+  NS_TEST_ASSERT_MSG_EQ (DynamicCast<BleNetDevice>(bleNetDevices.Get(1))
+      ->GetBBManager()->CountLinks(), 1, "Dev 1 is not involved in 1 links");
   
   Simulator::Destroy ();
 }
@@ -359,18 +439,23 @@ private:
   int pktsize = 20; //!< Size of packtets, in bytes
   int duration = 50; //<! Duration of the simulation in seconds
   int interval = 6; //!< Time between two packets
-  int packetSendDuration = 37; //<! Time during which new packets should be quied 
+  int packetSendDuration = 37; 
+  //<! Time during which new packets should be quied 
   bool verbose = false; // Enable logging
   bool nakagami = false; // enable nakagami path loss
   bool dynamic = false; // Wether the nodes are moving yes or no
   bool scheduled = true; // Schedule the TX windows instead of random parameters.
   uint32_t nNodes = 25; // Number of nodes
-  uint32_t nbConnInterval = 3200; // [MAX 3200]  nbConnInterval*1,25ms = size of connection interval. if nbConnInterval = 0, each link will get a random conn interval
+  uint32_t nbConnInterval = 3200; 
+  // [MAX 3200]  nbConnInterval*1,25ms = size of connection interval. 
+  // if nbConnInterval = 0, each link will get a random conn interval
   Ptr<OutputStreamWrapper> m_stream = 0; // Stream for waterfallcurve
   Ptr<UniformRandomVariable> randT = CreateObject<UniformRandomVariable> ();
 
-  std::unordered_map<uint32_t,std::tuple<uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t> > errorMap;
-  //Errormap: transmitted, received, received unique, received original, xlocation, ylocation
+  std::unordered_map<uint32_t,std::tuple<uint32_t,uint32_t,uint32_t,uint32_t,
+    uint32_t,uint32_t,uint32_t> > errorMap;
+  //Errormap: transmitted, received, received unique, received original, 
+  //xlocation, ylocation
   std::unordered_map<uint32_t,Ptr<BleNetDevice> > deviceMap;
 
   /************************
@@ -407,7 +492,6 @@ BleTestCase4::Transmitted (const Ptr<const Packet> packet)
     header.GetSrcAddr().CopyTo(buffer);
     uint32_t addr = buffer[1];
 
-    //NS_LOG (LOG_DEBUG, "Packet transmitted  " << packet << " src addr = " << addr);
 	std::get<0>(errorMap[addr-1])++;
 }
 
@@ -449,7 +533,6 @@ BleTestCase4::ReceivedUnique (const Ptr<const Packet> packet)
 	uint8_t buffer[2];
     header.GetDestAddr().CopyTo(buffer);
     uint32_t addr = buffer[1];
-    //NS_LOG (LOG_DEBUG, "Packet unique received  " << packet << " dest addr = " << addr);
 	std::get<2>(errorMap[addr-1])++;
 }
 
@@ -474,9 +557,18 @@ BleTestCase4::DoRun (void)
 {
   AsciiTraceHelper ascii;
   m_stream = ascii.CreateFileStream ("data.csv");
-  *m_stream->GetStream() << "#Scenario " << (int)nNodes <<  " nodes on a square field with side " << length << " meter" << " TX window scheduling enabled: " << scheduled << ", connection interval = " << nbConnInterval*1.25 << " millisec, (0 = random) " << std::endl;
-  // print Iteration, ID, transmitted, received, received unique, received at closest gateway, x coords, y coords, get average amount of retransmissions, get average time of transmissions, number of missed messages, amount of received messages.
-  *m_stream->GetStream() << "Iteration, ID, transmitted, received, received unique, received error, TX Windows Skipped x coords, y coords " <<std::endl;
+  *m_stream->GetStream() << "#Scenario " << (int)nNodes 
+    <<  " nodes on a square field with side " << length << " meter" 
+    << " TX window scheduling enabled: " << scheduled 
+    << ", connection interval = " << nbConnInterval*1.25 
+    << " millisec, (0 = random) " << std::endl;
+  // print Iteration, ID, transmitted, received, received unique, 
+  // received at closest gateway, x coords, y coords, 
+  // get average amount of retransmissions, get average time of transmissions, 
+  // number of missed messages, amount of received messages.
+  *m_stream->GetStream() << "Iteration, ID, transmitted, received, "
+    "received unique, received error, TX Windows Skipped x coords, y coords " 
+    <<std::endl;
   for (uint8_t iterationI=0;iterationI<nbIterations;iterationI++){
 		std::cout << "Iteration: " << (int)iterationI << std::endl;
  
@@ -498,7 +590,8 @@ BleTestCase4::DoRun (void)
     MobilityHelper mobility;
     Ptr<ListPositionAllocator> nodePositionList = 
       CreateObject<ListPositionAllocator> ();
-    for (uint32_t nodePositionsAssigned = 0; nodePositionsAssigned < nNodes; nodePositionsAssigned++)
+    for (uint32_t nodePositionsAssigned = 0; 
+        nodePositionsAssigned < nNodes; nodePositionsAssigned++)
     {
       double x,y;
       x = randT->GetInteger(0,length);
@@ -528,32 +621,48 @@ BleTestCase4::DoRun (void)
         s.insert(0,1,'0');
       s.insert(2,1,':');
       char const * buffer = s.c_str();
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(nodeI))->SetAddress (Mac16Address (buffer));
-      NS_LOG (LOG_INFO, "address = " << DynamicCast<BleNetDevice>(bleNetDevices.Get(nodeI))->GetAddress ());
+      DynamicCast<BleNetDevice>(
+          bleNetDevices.Get(nodeI))->SetAddress (Mac16Address (buffer));
+      NS_LOG (LOG_INFO, "address = " << DynamicCast<BleNetDevice>(
+            bleNetDevices.Get(nodeI))->GetAddress ());
     }
 
     // Create links between the nodes
    helper.CreateAllLinks (bleNetDevices, scheduled, nbConnInterval);
 
     NS_LOG (LOG_INFO, " Generate data ");
-    ApplicationContainer apps = helper.GenerateTraffic (randT, bleDeviceNodes, pktsize, 0, packetSendDuration, interval);
+    ApplicationContainer apps = helper.GenerateTraffic (
+        randT, bleDeviceNodes, pktsize, 0, packetSendDuration, interval);
 
     // Hookup functions to measure performance
 
     for (uint32_t i=0; i< bleNetDevices.GetN(); i++)
     {
       uint8_t buffer[2];
-      Mac16Address::ConvertFrom(bleNetDevices.Get(i)->GetAddress()).CopyTo(buffer);
+      Mac16Address::ConvertFrom(
+          bleNetDevices.Get(i)->GetAddress()).CopyTo(buffer);
       uint32_t addr = buffer[1];  
       deviceMap[addr ]=DynamicCast<BleNetDevice>(bleNetDevices.Get(i));
-      uint32_t x  = bleNetDevices.Get(i)->GetNode()->GetObject<MobilityModel>()->GetPosition ().x;
-      uint32_t y  = bleNetDevices.Get(i)->GetNode()->GetObject<MobilityModel>()->GetPosition ().y;
+      uint32_t x  = bleNetDevices.Get(i)->GetNode()
+        ->GetObject<MobilityModel>()->GetPosition ().x;
+      uint32_t y  = bleNetDevices.Get(i)->GetNode()
+        ->GetObject<MobilityModel>()->GetPosition ().y;
       errorMap[addr-1] = std::make_tuple (0,0,0,0,0,x,y);
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacTx",MakeCallback(&BleTestCase4::Transmitted, this));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacRx",MakeCallback(&BleTestCase4::ReceivedUnique, this));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacPromiscRx",MakeCallback(&BleTestCase4::Received, this));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("MacRxError",MakeCallback(&BleTestCase4::ReceivedError, this));
-      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))->TraceConnectWithoutContext ("TXWindowSkipped",MakeCallback(&BleTestCase4::TXWindowSkipped, this));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacTx",
+            MakeCallback(&BleTestCase4::Transmitted, this));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacRx",
+            MakeCallback(&BleTestCase4::ReceivedUnique, this));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacPromiscRx",
+            MakeCallback(&BleTestCase4::Received, this));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("MacRxError",
+            MakeCallback(&BleTestCase4::ReceivedError, this));
+      DynamicCast<BleNetDevice>(bleNetDevices.Get(i))
+        ->TraceConnectWithoutContext ("TXWindowSkipped",
+            MakeCallback(&BleTestCase4::TXWindowSkipped, this));
     }
 
     NS_LOG (LOG_INFO, "Simulator will run now");
@@ -564,13 +673,22 @@ BleTestCase4::DoRun (void)
     for (uint32_t i=0; i< bleNetDevices.GetN(); i++)
     {
             uint8_t buffer[2];
-            Mac16Address::ConvertFrom(bleNetDevices.Get(i)->GetAddress()).CopyTo(buffer);
+            Mac16Address::ConvertFrom(
+                bleNetDevices.Get(i)->GetAddress()).CopyTo(buffer);
             uint32_t addr = buffer[1];  
-            Ptr<BleNetDevice> netdevice =DynamicCast<BleNetDevice>(bleNetDevices.Get(i));
+            Ptr<BleNetDevice> netdevice =
+              DynamicCast<BleNetDevice>(bleNetDevices.Get(i));
             NS_LOG (LOG_DEBUG, "nd = " << netdevice << " addr = " << addr);
-			std::tuple<uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t> tuple = errorMap[i];
-			// print iteration, ID, transmitted, received, received unique, x coords, y coords.
-			*m_stream->GetStream() << (int)iterationI << "," << netdevice->GetAddress16() << "," << std::get<0>(tuple)<< "," << std::get<1>(tuple) << "," <<   std::get<2>(tuple) <<  "," << std::get<3>(tuple) << "," << std::get<4>(tuple) << "," << std::get<5>(tuple) << "," << std::get<6>(tuple) << std::endl;
+			std::tuple<uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,
+              uint32_t,uint32_t> tuple = errorMap[i];
+			// print iteration, ID, transmitted, received, received unique, 
+            // x coords, y coords.
+			*m_stream->GetStream() << (int)iterationI << "," 
+              << netdevice->GetAddress16() << "," << std::get<0>(tuple)
+              << "," << std::get<1>(tuple) << "," <<   std::get<2>(tuple) 
+              <<  "," << std::get<3>(tuple) << "," << std::get<4>(tuple) 
+              << "," << std::get<5>(tuple) << "," << std::get<6>(tuple) 
+              << std::endl;
 		
     }
     errorMap.clear();

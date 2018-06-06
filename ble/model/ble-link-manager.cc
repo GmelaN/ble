@@ -442,8 +442,8 @@ namespace ns3 {
       }
       else
       {
-        NS_LOG_WARN ("Connection interval will now be set to a value that 
-            is outside the range that the BLE standard accepts");
+        NS_LOG_WARN ("Connection interval will now be set to a value that"
+            "is outside the range that the BLE standard accepts");
         m_connInterval = connInterval;
       }
     }
@@ -457,8 +457,8 @@ namespace ns3 {
             (GetConnSupervisionTimeout()/GetConnInterval() - 1) ||
             connSlaveLatency <= 500))
       {
-        NS_LOG_WARN (" Connection Slave Latency will be set 
-            to an invalid value" );
+        NS_LOG_WARN (" Connection Slave Latency will be set "
+            "to an invalid value" );
       }
       m_connSlaveLatency = connSlaveLatency;
     }
@@ -473,8 +473,8 @@ namespace ns3 {
             //&& (connSupervisionTimeout%MilliSeconds(10) < NanoSeconds(PRECISION)) 
             ) )
       {
-        NS_LOG_WARN (" Connection Supervision 
-            timout will be set to an invalid value" );
+        NS_LOG_WARN (" Connection Supervision "
+            "timout will be set to an invalid value" );
       }
       m_connSupervisionTimeout = connSupervisionTimeout;
     }
@@ -792,9 +792,9 @@ namespace ns3 {
                BleMacHeader bmh1;
                Ptr<QueueItem> item = m_queue->Dequeue ();
                NS_ASSERT (item);
-               NS_LOG_DEBUG ("New packet set as current packet. 
-                   This new packet is not a dummy / Keep Alive Packet. 
-                   Packets left in the queue: "
+               NS_LOG_DEBUG ("New packet set as current packet. "
+                   "This new packet is not a dummy / Keep Alive Packet. "
+                   "Packets left in the queue: "
                    << m_queue->GetCurrentSize());
                Ptr<Packet> packet = item->GetPacket();
                packet->RemoveHeader(bmh1);
@@ -980,8 +980,8 @@ namespace ns3 {
            }
            else
            {
-             NS_LOG_ERROR ("The Link Manager is 
-                 in an impossible Connectionless State!");
+             NS_LOG_ERROR ("The Link Manager is "
+                 "in an impossible Connectionless State!");
              NS_ASSERT (false);
            }
          }
@@ -1021,7 +1021,10 @@ namespace ns3 {
      {
        NS_LOG_FUNCTION (this);
 
-       NS_LOG_INFO (this << " End of a TransmitWindow, my Role = " << expectedRole << " my link = " << this->GetAssociatedLink() << " this BBM = " << this->GetBBManager());
+       NS_LOG_INFO (this << " End of a TransmitWindow, my Role = " 
+           << expectedRole << " my link = " 
+           << this->GetAssociatedLink() 
+           << " this BBM = " << this->GetBBManager());
        
        NS_LOG_INFO ("End of a TransmitWindow");
        // set phy in standby mode after current TX / RX event is done,
@@ -1041,7 +1044,8 @@ namespace ns3 {
        {
          if (this->GetBBManager()->GetPhy()->GetState () == BlePhy::State::RX)
          {
-           // BB manager is prepared to receive packet, but no packet will be comming 
+           // BB manager is prepared to receive packet, 
+           // but no packet will be comming 
            this->GetBBManager()->GetPhy()->ChangeState(BlePhy::State::IDLE);
             this->GetBBManager()->SetActiveLinkManager(0);
  
@@ -1053,7 +1057,8 @@ namespace ns3 {
          }
          else
          {
-           NS_LOG_WARN (" End of transmitwindow, but still busy, PHY state = " << this->GetBBManager()->GetPhyState());
+           NS_LOG_WARN (" End of transmitwindow, but still busy, PHY state = " 
+               << this->GetBBManager()->GetPhyState());
          }
        }
 
@@ -1083,7 +1088,8 @@ namespace ns3 {
      {
        NS_LOG_FUNCTION (this);
        m_unmappedChannelIndex = (m_lastUnmappedChannelIndex + m_hopIncrement) % 37;
-       if (IsUsedChannel (m_unmappedChannelIndex)) // Is unmappedChannelIndex = used channel
+       if (IsUsedChannel (m_unmappedChannelIndex)) 
+         // Is unmappedChannelIndex = used channel
        {
          // Select channel index
          m_dataChannelIndex = m_unmappedChannelIndex;
@@ -1102,7 +1108,8 @@ namespace ns3 {
            this->GetBBManager()->GetLinkController()->
            GetChannelBasedOnChannelIndex (m_dataChannelIndex));
        this->GetBBManager()->GetPhy()->SetChannelIndex(m_dataChannelIndex);
-       NS_LOG_INFO (this << " Current Channel Index is : " << int(m_dataChannelIndex) );
+       NS_LOG_INFO (this << " Current Channel Index is : " 
+           << int(m_dataChannelIndex) );
      }
 }
 

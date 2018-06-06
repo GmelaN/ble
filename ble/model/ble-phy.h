@@ -17,6 +17,9 @@
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *          Based on the lora ns-3 module written by Brecht Reynders.
+ *          This module can be found here:
+ *https://github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
 
 #ifndef BLE_PHY_H
@@ -35,8 +38,10 @@ namespace ns3 {
 
 const int NB_BANDS = 40;
 const double BANDWIDTH = 2e6;
-const double TX_PREP_TIME = 50; // time needed to start up transmitter in microseconds
-const double RX_PREP_TIME = 50; // time needed to start up receiver in microseconds
+const double TX_PREP_TIME = 50; 
+// time needed to start up transmitter in microseconds
+const double RX_PREP_TIME = 50; 
+// time needed to start up receiver in microseconds
 
 class SpectrumChannel;
 class MobilityModel;
@@ -204,7 +209,9 @@ private:
  Ptr<SpectrumChannel> m_channel; //channel to transmit on
  Ptr<SpectrumValue> m_txPsd; //Current transmit psd
  Ptr<AntennaModel> m_antenna; //antenna to be used
- bool m_receiver; // whether or not this physical layer is a sender or receiver (only monodirectional traffic)
+ bool m_receiver; // whether or not this physical layer 
+                  // is a sender or receiver 
+                  // (only monodirectional traffic)
  double m_k; //boltzman
  double m_temperature; //noise temperature
  double m_bandWidth; //bandwith
@@ -212,13 +219,15 @@ private:
  double m_power; //power of transmission
  uint8_t m_channelIndex; //channel to transmit on
  double m_bitErrors[40]; //biterrors collected 
- std::vector <Ptr<BleSpectrumSignalParameters> > m_params; //all transmissions that are happening at the moment
+ std::vector <Ptr<BleSpectrumSignalParameters> > m_params; 
+            //all transmissions that are happening at the moment
  EventId m_events[40]; //current receiving events for sending
  double m_lastCheck; //last time check
  double m_equivalentNoiseTemperature; //noise temperature
  Ptr<SpectrumValue> m_receivingPower; //all the power at the receiving antenna
  Ptr<BleErrorModel> m_errorModel; // error model for this device
- Ptr<UniformRandomVariable> m_random; //determines whether received package is lost are not
+ Ptr<UniformRandomVariable> m_random; //determines whether received package 
+                                      //is lost are not
  Ptr<UniformRandomVariable> m_channelSelector; //selects the channel
  //callbackfunctions
  Callback<void, Ptr<const Packet> > m_transmissionEnd; 

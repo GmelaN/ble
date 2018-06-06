@@ -16,7 +16,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Stijn Geysen <stijn.geysen@student.kuleuven.be>
+ *   Adaptation 
+ *   from the LoRa ns-3 module lora-net-device,
+ *   written by Brecht Reynders.
+ *   This module can be found here:
+ *   github.com/networkedsystems/lora-ns3/blob/master/model/lora-mac-header.h
  */
+
 #include "ns3/ble-phy.h"
 #include "ns3/log.h"
 #include "ns3/queue.h"
@@ -153,8 +159,13 @@ namespace ns3 {
 			m_queue = 0;
 			m_node = 0;
 			m_phy = 0;
-			m_rxCallback = MakeNullCallback <bool, Ptr<NetDevice>, Ptr<const Packet>, uint16_t, const Address& > ();
-			m_promiscRxCallback = MakeNullCallback <bool, Ptr<NetDevice>,Ptr<const Packet>, uint16_t, const Address&, const Address&, PacketType > ();
+			m_rxCallback = MakeNullCallback <bool, 
+                         Ptr<NetDevice>, Ptr<const Packet>, 
+                         uint16_t, const Address& > ();
+			m_promiscRxCallback = MakeNullCallback <bool, 
+                                Ptr<NetDevice>,Ptr<const Packet>, 
+                                uint16_t, const Address&, 
+                                const Address&, PacketType > ();
 			NetDevice::DoDispose ();
 		}
 
@@ -176,7 +187,9 @@ namespace ns3 {
 			return m_ifIndex;
 		}
     
-//  the maximum transmission unit (MTU) is the size of the largest protocol data unit (PDU) that can be communicated in a single, network layer, transaction.
+//  the maximum transmission unit (MTU) is the size of the largest 
+//  protocol data unit (PDU) that can be communicated in a single, 
+//  network layer, transaction.
 	bool
 		BleNetDevice::SetMtu (uint16_t mtu)
 		{
@@ -387,7 +400,8 @@ namespace ns3 {
 		BleNetDevice::Send (Ptr<Packet> packet,uint16_t protocolNumber)
 		{
 			NS_LOG_FUNCTION (packet);
-			return this->SendFrom (packet, m_address, m_address, protocolNumber);
+			return this->SendFrom (
+                packet, m_address, m_address, protocolNumber);
 		}
 
 	bool
@@ -398,14 +412,19 @@ namespace ns3 {
 		}
 
 	bool
-		BleNetDevice::Send (Ptr<Packet> packet,const Address& dest, uint16_t protocolNumber)
+		BleNetDevice::Send (
+            Ptr<Packet> packet,const Address& dest, 
+            uint16_t protocolNumber)
 		{
 			NS_LOG_FUNCTION (packet << dest << protocolNumber);
-			return this->SendFrom (packet, m_address, dest, protocolNumber);
+			return this->SendFrom (
+                packet, m_address, dest, protocolNumber);
 		}
 
   bool
-	BleNetDevice::SendFrom (Ptr<Packet> packet, const Address& src, const Address& dest, uint16_t protocolNumber)
+	BleNetDevice::SendFrom (
+        Ptr<Packet> packet, const Address& src, 
+        const Address& dest, uint16_t protocolNumber)
 	{
 		NS_LOG_FUNCTION (packet << src << dest << protocolNumber);
 		
@@ -413,7 +432,9 @@ namespace ns3 {
       BleMacHeader header = BleMacHeader();
       if (src != this->GetAddress())
       {
-        NS_LOG_WARN ("Warning!!! You are trying to send a message from this device using a source address that does not belong to this device!!!");
+        NS_LOG_WARN ("Warning!!! You are trying to send a message from this"
+            " device using a source address that does "
+            "not belong to this device!!!");
       }
       header.SetSrcAddr(Mac16Address::ConvertFrom(src)); 
       Mac16Address dest16 = Mac16Address::ConvertFrom(dest);
@@ -538,8 +559,11 @@ namespace ns3 {
             NS_ASSERT(packet != 0);
 			BleMacHeader header;
 			packet->PeekHeader (header);
-			NS_LOG_LOGIC ("packet : Source --> " << header.GetSrcAddr () << " Dest --> " << header.GetDestAddr()
-                << "(here: " << m_address << ") protocol: " << header.GetProtocol () );
+			NS_LOG_LOGIC ("packet : Source --> " 
+                << header.GetSrcAddr () << " Dest --> " 
+                << header.GetDestAddr()
+                << "(here: " << m_address << ") protocol: " 
+                << header.GetProtocol () );
 			m_phy->ChangeState(BlePhy::State::IDLE);
 
 			PacketType packetType;
@@ -563,15 +587,6 @@ namespace ns3 {
             const Address src_addr = Address(header.GetSrcAddr());
             const Address dest_addr = Address(header.GetDestAddr());
 			NS_LOG_LOGIC ("packet size = " << packet_copy1->GetSize() );
-
-           // NS_ASSERT(src_addr.GetLength() > 0);
-           // NS_ASSERT(dest_addr.GetLength() > 0);
-           // NS_ASSERT(header.GetSrcAddr() != 0);
-           // NS_ASSERT(header.GetDestAddr() != 0);
-           // std::cout << std::endl;
-           // packet_copy1->Print(std::cout);
-           // std::cout << std::endl;
-            
 			BleMacHeader rmheader;
 			packet_copy1->RemoveHeader (rmheader);
             Ptr<const Packet> packet_copy = packet_copy1->Copy();
@@ -584,8 +599,11 @@ namespace ns3 {
             }
             else if (packetType != PACKET_OTHERHOST )
 			{
-			    NS_LOG_LOGIC ("packet : Source --> " << header.GetSrcAddr () << " Dest --> " << header.GetDestAddr()
-                  << "(here: " << m_address << ") protocol: " << header.GetProtocol () );
+			    NS_LOG_LOGIC ("packet : Source --> " 
+                    << header.GetSrcAddr () << " Dest --> " 
+                    << header.GetDestAddr()
+                  << "(here: " << m_address << ") protocol: " 
+                  << header.GetProtocol () );
                 NS_ASSERT(src_addr.GetLength() > 0);
                 NS_ASSERT(dest_addr.GetLength() > 0);
                 NS_ASSERT(src_addr.GetLength() == 2);
@@ -596,8 +614,10 @@ namespace ns3 {
 				m_macRxTrace(packet);
                 NS_ASSERT(packet_copy != 0);
                 m_rxCallback (nd_pointer, packet_copy, protocol, src_addr);
-                m_promiscRxCallback (nd_pointer, packet_copy, protocol, src_addr, dest_addr, packetType);
-				Simulator::ScheduleNow(&BleBBManager::TryAgain, this->GetBBManager());
+                m_promiscRxCallback (nd_pointer, packet_copy, 
+                    protocol, src_addr, dest_addr, packetType);
+				Simulator::ScheduleNow(&BleBBManager::TryAgain, 
+                    this->GetBBManager());
 			}
 			else // Received packet is not for me
 			{
