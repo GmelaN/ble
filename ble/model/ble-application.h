@@ -71,10 +71,14 @@ namespace ns3 {
             Mac16Address m_destination;
             Ptr<NetDevice> m_device;
 
-			EventId m_SenseEvent;     //!< The event that will fire at m_stopTime to end the application
-			Ptr<Socket> m_socket;		//!< The socket for this application. It sends directly to the netdevice (no routing!)
+			EventId m_SenseEvent;     
+              //!< The event that will fire at m_stopTime to end the application
+			Ptr<Socket> m_socket;		
+              //!< The socket for this application. 
+              // It sends directly to the netdevice (no routing!)
 			uint8_t m_dataSize;		//!< The size of an empty message
-			uint8_t m_port;			//!< The port to use (this is equal to the port MAC field in Ble)
+			uint8_t m_port;			
+              //!< The port to use (this is equal to the port MAC field in Ble)
 			Time m_interPacketTime;	//!< The time between two packets
             Time m_timeOffset; //!< Time before first packet is send
 		protected:
