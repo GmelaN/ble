@@ -179,49 +179,49 @@ TXWindowSkipped (const Ptr<const BleNetDevice> nd)
 int main (int argc, char** argv)
 {
   bool pcap = false;
-  bool printRoutes = true;
+      bool printRoutes = true;
 
-  CommandLine cmd;
-  cmd.AddValue ("verbose", "Tell application to log if true", verbose);
-  cmd.AddValue ("pcap", "Write PCAP traces.", pcap);
+      CommandLine cmd;
+      cmd.AddValue ("verbose", "Tell application to log if true", verbose);
+      cmd.AddValue ("pcap", "Write PCAP traces.", pcap);
 
 
-  cmd.Parse (argc,argv);
- // LogComponentEnableAll (LOG_PREFIX_TIME);
- // LogComponentEnableAll (LOG_PREFIX_FUNC);
- // LogComponentEnableAll (LOG_PREFIX_LEVEL);
- // LogComponentEnableAll (LOG_PREFIX_NODE);
- 
-  // Enable logging
-  BleHelper helper;
-  if (verbose)
-  {
-    helper.EnableLogComponents();
-  }
+      cmd.Parse (argc,argv);
+     // LogComponentEnableAll (LOG_PREFIX_TIME);
+     // LogComponentEnableAll (LOG_PREFIX_FUNC);
+     // LogComponentEnableAll (LOG_PREFIX_LEVEL);
+     // LogComponentEnableAll (LOG_PREFIX_NODE);
+     
+      // Enable logging
+      BleHelper helper;
+      if (verbose)
+      {
+        helper.EnableLogComponents();
+      }
 
-  Packet::EnablePrinting ();
-  Packet::EnableChecking ();
+      Packet::EnablePrinting ();
+      Packet::EnableChecking ();
 
-  NS_LOG_INFO ("BLE Routing example file");
+      NS_LOG_INFO ("BLE Routing example file");
 
-  // Enable debug output
-  NS_LOG_INFO ("Enable debug output");
-  AsciiTraceHelper ascii;
-  //helper.EnableAsciiAll (ascii.CreateFileStream ("example-ble.tr"));
-  m_stream = ascii.CreateFileStream ("example-routing.csv");
-  *m_stream->GetStream() << "#Scenario " << (int)nNodes 
-    <<  " nodes on a square field with side " << length 
-    << " meter" << " TX window scheduling enabled: " 
-    << scheduled << ", connection interval = " << nbConnInterval*1.25 
-    << " millisec, (0 = random) " << std::endl;
-  // print Iteration, ID, transmitted, received, received unique, 
-  // received at closest gateway, x coords, y coords, 
-  // get average amount of retransmissions, get average time of transmissions, 
-  // number of missed messages, amount of received messages.
-  *m_stream->GetStream() << "Iteration, ID, transmitted, received, "
-    "received unique, received error, broadcast received, 
-    TX Windows Skipped, x coords, y coords " <<std::endl;
-  for (uint8_t iterationI=0;iterationI<nbIterations;iterationI++){
+      // Enable debug output
+      NS_LOG_INFO ("Enable debug output");
+      AsciiTraceHelper ascii;
+      //helper.EnableAsciiAll (ascii.CreateFileStream ("example-ble.tr"));
+      m_stream = ascii.CreateFileStream ("example-routing.csv");
+      *m_stream->GetStream() << "#Scenario " << (int)nNodes 
+        <<  " nodes on a square field with side " << length 
+        << " meter" << " TX window scheduling enabled: " 
+        << scheduled << ", connection interval = " << nbConnInterval*1.25 
+        << " millisec, (0 = random) " << std::endl;
+      // print Iteration, ID, transmitted, received, received unique, 
+      // received at closest gateway, x coords, y coords, 
+      // get average amount of retransmissions, get average time of transmissions, 
+      // number of missed messages, amount of received messages.
+      *m_stream->GetStream() << "Iteration, ID, transmitted, received, "
+        "received unique, received error, broadcast received,"
+        "TX Windows Skipped, x coords, y coords " <<std::endl;
+      for (uint8_t iterationI=0; iterationI<nbIterations; iterationI++){
 		std::cout << "Iteration: " << (int)iterationI << std::endl;
  
 
