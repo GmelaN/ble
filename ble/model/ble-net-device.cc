@@ -141,7 +141,7 @@ namespace ns3 {
 
     Ptr<DropTailQueue<QueueItem>> packetQueue = 
       Create<DropTailQueue<QueueItem>> ();
-    packetQueue->SetMaxPackets(QUEUE_SIZE_PACKETS);
+    packetQueue->SetMaxSize( QueueSize (QUEUE_SIZE_PACKETS));
     this->SetQueue(packetQueue);
 
     //NS_LOG_INFO ("BleNetDevice constructor done");

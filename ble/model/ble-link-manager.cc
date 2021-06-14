@@ -76,7 +76,7 @@ namespace ns3 {
     SetTransmitWindowOffset (MicroSeconds (2500));
 
     Ptr<DropTailQueue<QueueItem>> buffer = Create<DropTailQueue<QueueItem>> ();
-    buffer->SetMaxPackets (QUEUE_SIZE_PACKETS);
+    buffer->SetMaxSize ( QueueSize(QUEUE_SIZE_PACKETS));
     this->m_queue = buffer;
   }
 

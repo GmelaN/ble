@@ -25,7 +25,7 @@
 #include <ns3/nstime.h>
 
 #define BLE_CONST_TIME_UNIT Time::Unit::US
-#define QUEUE_SIZE_PACKETS 100 // Max number of packets in the queue
+#define QUEUE_SIZE_PACKETS "100p" // Max number of packets in the queue
 #define T_IFS 150 // microseconds
 #define PRECISION 100 // In NanoSeconds
 
