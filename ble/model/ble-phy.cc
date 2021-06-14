@@ -125,7 +125,7 @@ namespace ns3 {
 		}
 
 	Ptr<MobilityModel>
-		BlePhy::GetMobility ()
+		BlePhy::GetMobility () const
 		{
 			return m_mobility;
 		}
@@ -215,7 +215,7 @@ namespace ns3 {
 		}
 
 	Ptr<AntennaModel>
-		BlePhy::GetRxAntenna ()
+		BlePhy::GetRxAntenna () const
 		{
 			NS_LOG_FUNCTION (this);
 			return m_antenna;
