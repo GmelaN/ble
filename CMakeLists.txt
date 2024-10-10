@@ -1,0 +1,31 @@
+build_lib(
+  LIBNAME ble
+  SOURCE_FILES
+    helper/ble-helper.cc
+    model/ble-application.cc
+    model/ble-link-controller.cc
+    model/ble-mac-header.cc
+    model/ble-spectrum-signal-parameters.cc
+    model/ble-bb-manager.cc
+    model/ble-link-manager.cc
+    model/ble-net-device.cc
+    model/ble-error-model.cc
+    model/ble-link.cc
+    model/ble-phy.cc
+  HEADER_FILES
+    helper/ble-helper.h
+    model/ble-application.h
+    model/ble-link-controller.h
+    model/ble-mac-header.h
+    model/ble-spectrum-signal-parameters.h
+    model/ble-bb-manager.h
+    model/ble-link-manager.h
+    model/ble-net-device.h
+    model/ble-error-model.h
+    model/ble-link.h
+    model/ble-phy.h
+  LIBRARIES_TO_LINK ${libspectrum}
+  TEST_SOURCES
+    test/ble-test-suite-broadcast.cc
+    test/ble-test-suite.cc
+)
