@@ -143,6 +143,14 @@ public:
   Ptr<AntennaModel> GetRxAntenna () const;
   void SetRxAntenna (Ptr<AntennaModel> a);
 
+  /**
+   * get the AntennaModel used by the NetDevice for transmission
+   *
+   * @return a Ptr to the AntennaModel used by the NetDevice for transmission
+   */
+  Ptr<Object> GetAntenna() const override;
+  void SetAntenna (Ptr<AntennaModel> a);
+
  /**
    * Notify the SpectrumPhy instance of an incoming signal
    *

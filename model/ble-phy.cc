@@ -220,6 +220,13 @@ namespace ns3 {
 			NS_LOG_FUNCTION (this);
 			return m_antenna;
 		}
+	
+	Ptr<Object>
+		BlePhy::GetAntenna () const
+		{
+			NS_LOG_FUNCTION (this);
+			return m_antenna;
+		}
 
     void
 		BlePhy::SetTransmissionEndCallback (Callback<void, 
@@ -266,7 +273,7 @@ namespace ns3 {
 				txParams->psd = m_txPsd;
 				txParams->txAntenna = m_antenna;
 				txParams->SetChannel(m_channelIndex);
-                NS_ASSERT(m_channel != 0);
+                NS_ASSERT(m_channel);
 				m_channel->StartTx (txParams);
 				Simulator::Schedule(txParams->duration,
                     &BlePhy::EndTx,this,packet->Copy());
@@ -282,7 +289,7 @@ namespace ns3 {
       NS_LOG_FUNCTION (this);
       this->ChangeState(BlePhy::State::IDLE);
 
-      NS_ASSERT (this->GetBBManager()->GetActiveLinkManager() != 0);
+      NS_ASSERT(this->GetBBManager()->GetActiveLinkManager());
       this->GetBBManager()->GetActiveLinkManager()->HandleTXDone();
       NS_LOG_INFO ("Packet transmission done");
       m_transmissionEnd (packet);
@@ -307,7 +314,7 @@ namespace ns3 {
                     &BlePhy::EndNoise,this,params->psd);
 				*m_receivingPower += *params->psd;
 				//m_ReceptionStart();
-				if (sfParams != 0){
+				if (sfParams){
 					uint8_t channel = sfParams->GetChannel();
 					//Choose highest SNR if multiple
 					if (m_params.size()<1){
