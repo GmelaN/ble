@@ -98,16 +98,16 @@ namespace ns3 {
   void
     BleLink::AddSlave(Ptr<BleBBManager> bleBBManager)
     {
-      NS_ASSERT (bleBBManager != 0);
+      NS_ASSERT(bleBBManager);
       m_slaves.push_back(bleBBManager);
     }
 
   void
     BleLink::SetMaster(Ptr<BleBBManager> bleBBManager)
     {
-      NS_ASSERT (bleBBManager != 0);
+      NS_ASSERT(bleBBManager);
       // If there already is a master, make that master a slave
-      if (m_master != 0)
+      if (m_master)
       {
         this->AddSlave(m_master);
       }

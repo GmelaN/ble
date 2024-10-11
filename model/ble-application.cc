@@ -114,7 +114,7 @@ namespace ns3 {
 	{ 
 		NS_LOG_FUNCTION (this);
 		// if there is no socket, generate one
-		if (m_socket == 0)
+		if (!m_socket)
 		{
 			m_socket = CreateObject<PacketSocket> ();
 			StaticCast<PacketSocket>(m_socket)->SetNode (m_node);

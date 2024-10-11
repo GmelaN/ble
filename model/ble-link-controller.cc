@@ -208,7 +208,7 @@ namespace ns3 {
     BleLinkController::StartTransmissionNoArgs()
     {
       NS_LOG_FUNCTION(this);
-      NS_ASSERT (this->GetCurrentPacket() != 0);
+      NS_ASSERT(this->GetCurrentPacket());
 
       if (StartTransmission (this->GetCurrentPacket()->Copy(), false))
       {
@@ -243,7 +243,7 @@ namespace ns3 {
     BleLinkController::PrepareForReception (Ptr<BleLinkManager> lm)
     {
       NS_LOG_FUNCTION (this);
-      if (! this->GetBBManager()->GetActiveLinkManager() == 0)
+      if (!this->GetBBManager()->GetActiveLinkManager())
       {
         if (this->GetPhy()->GetState() == BlePhy::State::IDLE)
           this->GetPhy()->PrepareRX();
@@ -262,7 +262,7 @@ namespace ns3 {
     BleLinkController::StartPacketTransmission (Ptr<BleLinkManager> lm)
     {
       NS_LOG_FUNCTION(this);
-      NS_ASSERT (lm->GetCurrentPacket() != 0);
+      NS_ASSERT(lm->GetCurrentPacket());
       
       if (StartTransmission (lm->GetCurrentPacket()->Copy(), false)) 
       {
@@ -281,7 +281,7 @@ namespace ns3 {
         bool receptionError) 
     {
       NS_LOG_FUNCTION (this);
-      if (this->GetBBManager()->GetActiveLinkManager() != 0)
+      if (this->GetBBManager()->GetActiveLinkManager())
       {
       if (receptionError) // Error during packet reception,
       {
@@ -307,7 +307,7 @@ namespace ns3 {
       {
         BleMacHeader bmh;
         Ptr<BleLinkManager> lm = this->GetBBManager()->GetActiveLinkManager();
-        NS_ASSERT (lm != 0);
+        NS_ASSERT(lm);
         packet->PeekHeader(bmh);
         NS_LOG_DEBUG ("Header received. LLID = " <<
             int(bmh.GetLLID()) << " MD = " << bmh.GetMD() <<

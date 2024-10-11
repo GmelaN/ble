@@ -125,10 +125,10 @@ namespace ns3 {
   void
     BleBBManager::SetActiveLinkManager (Ptr<BleLinkManager> lm)
     {
-      if (lm == 0)
+      if (!lm)
         NS_ASSERT (this->GetPhyState() == BlePhy::State::IDLE);
       else
-        NS_ASSERT (this->m_activeLinkManager == 0);
+        NS_ASSERT (!this->m_activeLinkManager);
       this->m_activeLinkManager = lm;
     }
 
@@ -146,8 +146,8 @@ namespace ns3 {
     BleBBManager::AddLinkManager(Ptr<BleLinkManager> linkManager)
     {
       NS_LOG_FUNCTION (this << linkManager);
-      NS_ASSERT (linkManager->GetAssociatedLink() != 0);
-      if (linkManager->GetAssociatedLink()->GetMaster() == 0) 
+      NS_ASSERT (linkManager->GetAssociatedLink());
+      if (!linkManager->GetAssociatedLink()->GetMaster()) 
       {
         // Link has no master set, this BBManager becomes master
         linkManager->GetAssociatedLink()->
@@ -183,7 +183,7 @@ namespace ns3 {
 
       // Manage my LinkManager
       Ptr<BleLinkManager> myLinkManager = CreateObject<BleLinkManager> ();
-      NS_ASSERT (myLinkManager->GetQueue() != 0);
+      NS_ASSERT(myLinkManager->GetQueue());
 
       myLinkManager->SetBBManager(Ptr<BleBBManager> (this));
       myLinkManager->SetUsedChannels((chmap));
@@ -226,7 +226,7 @@ namespace ns3 {
       Ptr<BleLinkManager> myLinkManager = CreateObject<BleLinkManager> ();
       Ptr<BleLinkManager> otherLinkManager = CreateObject<BleLinkManager> ();
 
-      NS_ASSERT (myLinkManager->GetQueue() != 0);
+      NS_ASSERT(myLinkManager->GetQueue());
  
       myLinkManager->SetBBManager(Ptr<BleBBManager> (this));
       otherLinkManager->SetBBManager(otherBBManager);
@@ -267,7 +267,7 @@ namespace ns3 {
       Ptr<BleLinkManager> myLinkManager = CreateObject<BleLinkManager> ();
       Ptr<BleLinkManager> otherLinkManager = CreateObject<BleLinkManager> ();
 
-      NS_ASSERT (myLinkManager->GetQueue() != 0);
+      NS_ASSERT(myLinkManager->GetQueue());
  
       myLinkManager->SetBBManager(Ptr<BleBBManager> (this));
       otherLinkManager->SetBBManager(otherBBManager);
@@ -318,8 +318,8 @@ namespace ns3 {
       for (it = m_linkManagers.begin(); it != m_linkManagers.end(); ++it)
       {
         Ptr<BleLinkManager> lm = *it;
-        NS_ASSERT(lm->GetAssociatedLink() != 0);
-        NS_ASSERT(link != 0);
+        NS_ASSERT(lm->GetAssociatedLink());
+        NS_ASSERT(link);
         if (lm->GetAssociatedLink() == link) 
         {
           return true;
@@ -366,9 +366,9 @@ namespace ns3 {
         for (it2 = all_devices.begin(); it2 != all_devices.end(); ++it2)
         {
           Ptr<BleBBManager> bbm = *it2;
-          NS_ASSERT(bbm != 0);
+          NS_ASSERT(bbm);
           Ptr<BleNetDevice> nd = bbm->GetNetDevice ();
-          NS_ASSERT(nd != 0);
+          NS_ASSERT(nd);
           if (nd->GetAddress16() == address 
               && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
           {
@@ -397,9 +397,9 @@ namespace ns3 {
         for (it2 = all_devices.begin(); it2 != all_devices.end(); ++it2)
         {
           Ptr<BleBBManager> bbm = *it2;
-          NS_ASSERT(bbm != 0);
+          NS_ASSERT(bbm);
           Ptr<BleNetDevice> nd = bbm->GetNetDevice ();
-          NS_ASSERT(nd != 0);
+          NS_ASSERT(nd);
           if (nd->GetAddress16() == address 
               && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
           {
@@ -430,9 +430,9 @@ namespace ns3 {
         for (it2 = all_devices.begin(); it2 != all_devices.end(); ++it2)
         {
           Ptr<BleBBManager> bbm = *it2;
-          NS_ASSERT(bbm != 0);
+          NS_ASSERT(bbm);
           Ptr<BleNetDevice> nd = bbm->GetNetDevice ();
-          NS_ASSERT(nd != 0);
+          NS_ASSERT(nd);
           if (nd->GetAddress16() == address 
               && temp->GetLinkType() != BleLink::LinkType::BROADCAST) 
           {

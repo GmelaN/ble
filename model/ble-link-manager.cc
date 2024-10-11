@@ -602,7 +602,7 @@ namespace ns3 {
     BleLinkManager::GetQueue (void)
     {
       NS_LOG_FUNCTION (this);
-      NS_ASSERT(m_queue != 0);
+      NS_ASSERT(m_queue);
       return m_queue;
     }
 
@@ -777,7 +777,7 @@ namespace ns3 {
        
        if (IsInsideLastTransmitWindow (currentTime))
        {
-           if (this->GetCurrentPacket () != 0 && (! readyForNewData) 
+           if (this->GetCurrentPacket () && (! readyForNewData) 
                && (! (this->GetState() == ADVERTISER)))
            {
              // Transmission of a packet failed during the last
@@ -786,7 +786,7 @@ namespace ns3 {
            }
            else // No current packet
            {
-             NS_ASSERT(m_queue != 0);
+             NS_ASSERT(m_queue);
              if (! (m_queue->IsEmpty()))
              {
                BleMacHeader bmh1;
@@ -916,7 +916,7 @@ namespace ns3 {
        // wait for packet from master to arrive
 
        NS_LOG_FUNCTION (this);
-       if ( this->GetBBManager()->GetActiveLinkManager() == 0)
+       if (!this->GetBBManager()->GetActiveLinkManager())
        {
          this->GetBBManager()->SetActiveLinkManager(this);
 
@@ -1030,7 +1030,7 @@ namespace ns3 {
        // set phy in standby mode after current TX / RX event is done,
        // deactive activeLinkManager in BBM
        // schedule next tx window
-       if (this->GetBBManager()->GetActiveLinkManager() == 0)
+       if (!this->GetBBManager()->GetActiveLinkManager())
        {
          this->GetBBManager()->GetPhy()->ChangeState(BlePhy::State::IDLE);
        }

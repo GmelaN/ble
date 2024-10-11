@@ -200,7 +200,7 @@ BleHelper::Install (NodeContainer c)
 		devices.Add(anandi);
 		Ptr<BlePhy> sfp = Create<BlePhy> ();
         Ptr<BleLinkController> blc = CreateObject<BleLinkController> ();
-		if (m_spectrumModel == 0)
+		if (!m_spectrumModel)
 			m_spectrumModel = sfp->GetRxSpectrumModel();
 		else
 			sfp->SetRxSpectrumModel (m_spectrumModel);
@@ -304,7 +304,7 @@ BleHelper::EnablePcapInternal (std::string prefix,
   // NetDevice type
   //
   Ptr<BleNetDevice> device = nd->GetObject<BleNetDevice> ();
-  if (device == 0)
+  if (!device)
     {
       NS_LOG_INFO ("BleHelper::EnablePcapInternal(): Device " 
           << device << " not of type ns3::BleNetDevice");
@@ -353,7 +353,7 @@ BleHelper::EnableAsciiInternal (
   std::ostringstream oss;
 
   Ptr<BleNetDevice> device = nd->GetObject<BleNetDevice> ();
-  if (device == 0)
+  if (!device)
     {
       NS_LOG_INFO ("BleHelper::EnableAsciiInternal(): Device " 
           << device << " not of type ns3::BleNetDevice");
@@ -372,7 +372,7 @@ BleHelper::EnableAsciiInternal (
   // since there will be one file per context and therefore the context would
   // be redundant.
   //
-  if (stream == 0)
+  if (!stream)
     {
       //
       // Set up an output stream object to deal with private ofstream copy

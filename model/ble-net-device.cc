@@ -336,7 +336,7 @@ namespace ns3 {
 		{
 			NS_LOG_FUNCTION (this << c);
           // TAKE CARE: there is also a channel variabl in the phy layer
-            if (this->GetPhy() != 0) {
+            if (this->GetPhy()) {
               this->GetPhy()
                 ->SetChannel(DynamicCast<SpectrumChannel> (c));
             }
@@ -449,10 +449,10 @@ namespace ns3 {
       NS_LOG_LOGIC ("Enqueueing new packet of length " << packet->GetSize());
       Simulator::ScheduleNow(&BleBBManager::TryAgain,
          this->GetBBManager());
-      NS_ASSERT(m_queue !=0);
-      NS_ASSERT(packet !=0);
+      NS_ASSERT(m_queue);
+      NS_ASSERT(packet);
       Ptr<QueueItem> item = Create<QueueItem> (packet);
-      NS_ASSERT(item !=0);
+      NS_ASSERT(item);
       NS_LOG_INFO ("Max size of queue = " << m_queue->GetMaxSize());
       NS_LOG_INFO ("Current size of queue = " << m_queue->GetCurrentSize());
       NS_LOG_INFO ("Size of packet item = " << item->GetSize());
@@ -556,7 +556,7 @@ namespace ns3 {
 		{
 			NS_LOG_FUNCTION (this << packet);
 
-            NS_ASSERT(packet != 0);
+            NS_ASSERT(packet);
 			BleMacHeader header;
 			packet->PeekHeader (header);
 			NS_LOG_LOGIC ("packet : Source --> " 
@@ -594,7 +594,7 @@ namespace ns3 {
             if (packetType == PACKET_BROADCAST )
             {
 			  m_macRxBroadcastTrace(packet, this);
-              NS_ASSERT(packet_copy != 0);
+              NS_ASSERT(packet_copy);
               m_rxCallback (nd_pointer, packet_copy, protocol, src_addr);
             }
             else if (packetType != PACKET_OTHERHOST )
@@ -608,11 +608,11 @@ namespace ns3 {
                 NS_ASSERT(dest_addr.GetLength() > 0);
                 NS_ASSERT(src_addr.GetLength() == 2);
                 NS_ASSERT(dest_addr.GetLength() == 2);
-                NS_ASSERT(header.GetSrcAddr() != 0);
-                NS_ASSERT(header.GetDestAddr() != 0);    
-                NS_ASSERT(packet != 0);
+                NS_ASSERT(header.GetSrcAddr() != Mac16Address("00:00"));
+                NS_ASSERT(header.GetDestAddr() != Mac16Address("00:00"));    
+                NS_ASSERT(packet);
 				m_macRxTrace(packet);
-                NS_ASSERT(packet_copy != 0);
+                NS_ASSERT(packet_copy);
                 m_rxCallback (nd_pointer, packet_copy, protocol, src_addr);
                 m_promiscRxCallback (nd_pointer, packet_copy, 
                     protocol, src_addr, dest_addr, packetType);

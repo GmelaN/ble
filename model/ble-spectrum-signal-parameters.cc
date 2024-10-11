@@ -51,11 +51,11 @@ BleSpectrumSignalParameters::~BleSpectrumSignalParameters (void)
 {
   NS_LOG_FUNCTION (this);
   packet = 0;
-	if (txAntenna !=0)
+	if (txAntenna)
 		txAntenna = 0;
-	if (txPhy != 0)
+	if (txPhy)
 		txPhy = 0;
-	if (psd !=0)
+	if (psd)
 		psd = 0;
 }
 
