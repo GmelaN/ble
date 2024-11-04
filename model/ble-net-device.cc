@@ -614,8 +614,8 @@ namespace ns3 {
 				m_macRxTrace(packet);
                 NS_ASSERT(packet_copy);
                 m_rxCallback (nd_pointer, packet_copy, protocol, src_addr);
-                m_promiscRxCallback (nd_pointer, packet_copy, 
-                    protocol, src_addr, dest_addr, packetType);
+                // m_promiscRxCallback (nd_pointer, packet_copy, 
+                //     protocol, src_addr, dest_addr, packetType);
 				Simulator::ScheduleNow(&BleBBManager::TryAgain, 
                     this->GetBBManager());
 			}
