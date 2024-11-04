@@ -296,81 +296,166 @@ namespace ns3 {
 	}
 
 
+	// void
+	// 	BlePhy::StartRx (Ptr<SpectrumSignalParameters> params)
+	// 	{
+    //       NS_LOG_FUNCTION (this);
+	// 		if (this->GetState() != BlePhy::State::RX_BUSY) //m_receiver)
+	// 		{
+    //          NS_LOG_INFO ("Receiving starts now");
+	// 			//update BER
+	// 			UpdateBer();
+	// 			NS_LOG_FUNCTION (this);
+	// 			// do something with params
+	// 			Ptr<BleSpectrumSignalParameters> sfParams = 
+    //               DynamicCast<BleSpectrumSignalParameters> (params);
+	// 			// add power to received power
+	// 			Simulator::Schedule(params->duration,
+    //                 &BlePhy::EndNoise,this,params->psd);
+	// 			*m_receivingPower += *params->psd;
+	// 			//m_ReceptionStart();
+	// 			if (sfParams){
+	// 				uint8_t channel = sfParams->GetChannel();
+	// 				//Choose highest SNR if multiple
+	// 				if (m_params.size()<1){
+	// 					m_params.push_back(sfParams);
+	// 					sfParams->SetBer(0);
+	// 					//generate ending event
+	// 					sfParams->SetEvent(Simulator::Schedule(
+    //                           sfParams->duration,&BlePhy::EndRx,this,sfParams));
+	// 				}
+	// 				else {
+	// 					//check if there is a collision
+	// 					sfParams->SetBer(0);
+	// 					sfParams->SetEvent(Simulator::Schedule(
+    //                           sfParams->duration,&BlePhy::EndRx,this,sfParams));  
+	// 					for (auto &it : m_params)
+	// 					{
+	// 						if (it->GetChannel() == channel){
+    //                             // Co-channel rejection:
+    //                             // 6 dB ==> 4.0
+    //                             // 11 dB ==> 12.6
+    //                             double ccrejection = 12.6;
+	// 							//if there is a collision, 
+    //                             //  No problem if 6dB power difference, 
+    //                             //  but other is corrupted;
+	// 							if (Integral(*it->psd)*ccrejection 
+    //                                 < Integral(*sfParams->psd)){
+	// 								it->SetBer(10);
+	// 							}
+	// 							else{
+	// 								//if 6dB lower power, there is no detection
+	// 								if (Integral(*it->psd) 
+    //                                     > ccrejection*Integral(*sfParams->psd)){
+	// 									sfParams->SetBer(10);
+	// 								}
+	// 								else
+	// 								{
+	// 									// in all the other cases, 
+    //                                     // the signal gets not detected, 
+    //                                     // but the other packet is corrupted.
+	// 									sfParams->SetBer(10);
+	// 									it->SetBer(10);
+	// 								}
+	// 							}
+	// 						}
+	// 					}
+	// 					m_params.push_back(sfParams);
+	// 				}
+	// 			}
+	// 		}
+    //         else
+    //         {
+    //           NS_LOG_INFO ("Cannot start "
+    //               "receiving without being in receive state");
+    //         }
+	// 	}
+
+
 	void
 		BlePhy::StartRx (Ptr<SpectrumSignalParameters> params)
 		{
           NS_LOG_FUNCTION (this);
-			if (this->GetState() == BlePhy::State::RX_BUSY) //m_receiver)
+    if (this->GetState() != BlePhy::State::RX_BUSY) //m_receiver)
 			{
-                NS_LOG_INFO ("Receiving starts now");
-				//update BER
+        NS_LOG_INFO ("[StartRx] Receiving starts now");
+        
+        // BER 업데이트
 				UpdateBer();
-				NS_LOG_FUNCTION (this);
-				// do something with params
-				Ptr<BleSpectrumSignalParameters> sfParams = 
-                  DynamicCast<BleSpectrumSignalParameters> (params);
-				// add power to received power
-				Simulator::Schedule(params->duration,
-                    &BlePhy::EndNoise,this,params->psd);
+        NS_LOG_DEBUG ("[StartRx] BER updated.");
+
+        Ptr<BleSpectrumSignalParameters> sfParams = DynamicCast<BleSpectrumSignalParameters> (params);
+
+        // 수신 신호의 파워를 추가
 				*m_receivingPower += *params->psd;
-				//m_ReceptionStart();
-				if (sfParams){
+        NS_LOG_DEBUG ("[StartRx] Added received power to m_receivingPower.");
+
+        // 노이즈 종료 스케줄링
+        Simulator::Schedule(params->duration, &BlePhy::EndNoise, this, params->psd);
+
+        if (sfParams)
+        {
 					uint8_t channel = sfParams->GetChannel();
-					//Choose highest SNR if multiple
-					if (m_params.size()<1){
+            NS_LOG_DEBUG ("[StartRx] Signal received on channel " << static_cast<int>(channel));
+
+            if (m_params.size() < 1)
+            {
+                // 첫 번째 신호 처리
 						m_params.push_back(sfParams);
 						sfParams->SetBer(0);
-						//generate ending event
-						sfParams->SetEvent(Simulator::Schedule(
-                              sfParams->duration,&BlePhy::EndRx,this,sfParams));
-					}
-					else {
-						//check if there is a collision
+                sfParams->SetEvent(Simulator::Schedule(sfParams->duration, &BlePhy::EndRx, this, sfParams));
+                NS_LOG_INFO ("[StartRx] No collision detected. First signal processed on channel "
+                             << static_cast<int>(channel));
+            }
+            else
+            {
+                // 채널 충돌 검사
 						sfParams->SetBer(0);
-						sfParams->SetEvent(Simulator::Schedule(
-                              sfParams->duration,&BlePhy::EndRx,this,sfParams));  
+                sfParams->SetEvent(Simulator::Schedule(sfParams->duration, &BlePhy::EndRx, this, sfParams));
+
 						for (auto &it : m_params)
 						{
-							if (it->GetChannel() == channel){
-                                // Co-channel rejection:
-                                // 6 dB ==> 4.0
-                                // 11 dB ==> 12.6
-                                double ccrejection = 12.6;
+                    NS_LOG_DEBUG ("[StartRx] Checking for collision with signal on channel "
+                                  << static_cast<int>(it->GetChannel()));
 
-								//if there is a collision, 
-                                //  No problem if 6dB power difference, 
-                                //  but other is corrupted;
-								if (Integral(*it->psd)*ccrejection 
-                                    < Integral(*sfParams->psd)){
+                    if (it->GetChannel() == channel)
+                    {
+                        double ccrejection = 12.6; // Co-channel rejection threshold
+
+                        // 충돌 처리
+                        if (Integral(*it->psd) * ccrejection < Integral(*sfParams->psd))
+                        {
 									it->SetBer(10);
-								}
-								else{
-									//if 6dB lower power, there is no detection
-									if (Integral(*it->psd) 
-                                        > ccrejection*Integral(*sfParams->psd)){
+                            NS_LOG_WARN ("[StartRx] Collision detected. Lower power signal corrupted.");
+                        }
+                        else if (Integral(*it->psd) > ccrejection * Integral(*sfParams->psd))
+                        {
 										sfParams->SetBer(10);
+                            NS_LOG_WARN ("[StartRx] Collision detected. Incoming signal corrupted due to higher power.");
 									}
 									else
 									{
-										// in all the other cases, 
-                                        // the signal gets not detected, 
-                                        // but the other packet is corrupted.
 										sfParams->SetBer(10);
 										it->SetBer(10);
-									}
+                            NS_LOG_WARN ("[StartRx] Collision detected. Both signals corrupted.");
 								}
 							}
 						}
 						m_params.push_back(sfParams);
 					}
+        }
+		else
+		{
+			NS_LOG_INFO("[StartRx] could not parse packet.");
 				}
 			}
             else
             {
-              NS_LOG_INFO ("Cannot start "
-                  "receiving without being in receive state");
+        NS_LOG_WARN ("[StartRx] Cannot start receiving; current state is not RX_READY.");
             }
 		}
+
+
 
 	void
 		BlePhy::EndNoise (Ptr<SpectrumValue> sv)
@@ -381,10 +466,18 @@ namespace ns3 {
 		}
 
 	void 
-		BlePhy::EndRx (Ptr<BleSpectrumSignalParameters> params)
+		BlePhy::EndRx (Ptr<SpectrumSignalParameters> param)
 		{
 			NS_LOG_FUNCTION(this);
             NS_LOG_INFO ("Receiving stops now");
+
+			Ptr<BleSpectrumSignalParameters> params = DynamicCast<BleSpectrumSignalParameters>(param);
+			if(!params) {
+				NS_LOG_INFO("removing interferent.");
+				this->ChangeState(BlePhy::State::IDLE);
+				return;
+			}
+
 			//update BER
 			UpdateBer();
 			int temp = 0;
@@ -405,6 +498,7 @@ namespace ns3 {
 			}
 			else
 			{
+				NS_LOG_INFO("packet error.");
 				//packet error
 				m_ReceptionEnd(params->packet, true);
 			}
