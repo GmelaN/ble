@@ -165,28 +165,55 @@ void
 BleHelper::ConstructAllChannels()
 {
     SpectrumChannelHelper channelHelper;
-    channelHelper.SetChannel ("ns3::MultiModelSpectrumChannel");
-    bool nakagami = false;
-    if (nakagami)
-    {
-    	channelHelper.AddPropagationLoss ("ns3::OkumuraHataPropagationLossModel",
-            "Frequency",DoubleValue(2400e6));
-     	channelHelper.AddPropagationLoss ("ns3::NakagamiPropagationLossModel",
-            "m0",DoubleValue(1),"m1",DoubleValue(1),"m2",DoubleValue(1));
-    }
-    else
-    {
-      channelHelper.AddPropagationLoss ("ns3::OkumuraHataPropagationLossModel",
-          "Frequency",DoubleValue(2400e6));
-    }
-    channelHelper.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
+    channelHelper.SetChannel("ns3::MultiModelSpectrumChannel");
+
+    channelHelper.AddPropagationLoss("ns3::LogDistancePropagationLossModel"
+        // "ReferenceDistance", DoubleValue(1.0),
+        // "ReferenceLoss", DoubleValue(47.0),
+        // "Exponent", DoubleValue(3.0),
+        // "Frequency", DoubleValue(2410e6)
+        );
+
+    // channelHelper.AddPropagationLoss("ns3::NakagamiPropagationLossModel",
+    //     "m0", DoubleValue(1), "m1", DoubleValue(1), "m2", DoubleValue(1));
+
+  channelHelper.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
     
-  for (int i=0; i<40; i++)
+    
+    for (int i = 0; i < 40; i++)
   {
-    Ptr<SpectrumChannel> c = channelHelper.Create ();
+        Ptr<SpectrumChannel> c = channelHelper.Create();
     m_allChannels.push_back(c);
   }
 }
+
+
+// void
+// BleHelper::ConstructAllChannels()
+// {
+//     SpectrumChannelHelper channelHelper;
+//     channelHelper.SetChannel ("ns3::MultiModelSpectrumChannel");
+//     bool nakagami = false;
+//     if (nakagami)
+//     {
+//     	channelHelper.AddPropagationLoss ("ns3::OkumuraHataPropagationLossModel",
+//             "Frequency",DoubleValue(2400e6));
+//      	channelHelper.AddPropagationLoss ("ns3::NakagamiPropagationLossModel",
+//             "m0",DoubleValue(1),"m1",DoubleValue(1),"m2",DoubleValue(1));
+//     }
+//     else
+//     {
+//       channelHelper.AddPropagationLoss ("ns3::OkumuraHataPropagationLossModel",
+//           "Frequency",DoubleValue(2400e6));
+//     }
+//     channelHelper.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
+    
+//   for (int i=0; i<40; i++)
+//   {
+//     Ptr<SpectrumChannel> c = channelHelper.Create ();
+//     m_allChannels.push_back(c);
+//   }
+// }
 
 NetDeviceContainer
 BleHelper::Install (NodeContainer c)
