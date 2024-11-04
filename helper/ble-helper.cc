@@ -161,6 +161,7 @@ BleHelper::AddMobility (Ptr<BlePhy> phy, Ptr<MobilityModel> m)
   phy->SetMobility (m);
 }
 
+
 void
 BleHelper::ConstructAllChannels()
 {
@@ -181,10 +182,10 @@ BleHelper::ConstructAllChannels()
     
     
     for (int i = 0; i < 40; i++)
-  {
+    {
         Ptr<SpectrumChannel> c = channelHelper.Create();
-    m_allChannels.push_back(c);
-  }
+        m_allChannels.push_back(c);
+    }
 }
 
 

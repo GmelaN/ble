@@ -885,7 +885,7 @@ namespace ns3 {
      {
        NS_LOG_FUNCTION (this);
        this->GetBBManager()->GetPhy()->ChangeState(BlePhy::State::IDLE);
-       this->SetCurrentPacket(0);
+      //  this->SetCurrentPacket(NULL);
        Time currentTime = Simulator::Now();
        if (IsInsideLastTransmitWindow (currentTime) && GetPeerHasMoreData()  )
        {
