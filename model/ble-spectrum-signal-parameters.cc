@@ -60,10 +60,10 @@ BleSpectrumSignalParameters::~BleSpectrumSignalParameters (void)
 }
 
 Ptr<SpectrumSignalParameters>
-BleSpectrumSignalParameters::Copy (void)
+BleSpectrumSignalParameters::Copy() const
 {
-  NS_LOG_FUNCTION (this);
-  return Create<BleSpectrumSignalParameters> (*this);
+    NS_LOG_FUNCTION(this);
+    return Create<BleSpectrumSignalParameters>(*this);
 }
 
 uint8_t
