@@ -163,7 +163,7 @@ public:
    *
    * @param params the parameters of the signals being received
    */
-  void EndRx (Ptr<BleSpectrumSignalParameters> params);
+  void EndRx (Ptr<SpectrumSignalParameters> params);
   void EndNoise (Ptr<SpectrumValue> sv);
   /**
    *
