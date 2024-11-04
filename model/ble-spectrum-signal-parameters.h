@@ -41,7 +41,7 @@ struct BleSpectrumSignalParameters : public SpectrumSignalParameters
 {
 
   // inherited from SpectrumSignalParameters
-  virtual Ptr<SpectrumSignalParameters> Copy (void);
+  Ptr<SpectrumSignalParameters> Copy() const override;
   /**
    * default constructor
    */

@@ -709,13 +709,13 @@ public:
 };
 
 BleTestSuite::BleTestSuite ()
-  : TestSuite ("ble1", UNIT)
+  : TestSuite ("ble1", Type::UNIT)
 {
   // TestDuration for TestCase can be QUICK, EXTENSIVE or TAKES_FOREVER
-  //AddTestCase (new BleTestCase1, TestCase::QUICK);
-  AddTestCase (new BleTestCase2, TestCase::QUICK);
-  AddTestCase (new BleTestCase3, TestCase::QUICK);
-  AddTestCase (new BleTestCase4, TestCase::QUICK);
+  //AddTestCase (new BleTestCase1, Duration::QUICK);
+  AddTestCase (new BleTestCase2, Duration::QUICK);
+  AddTestCase (new BleTestCase3, Duration::QUICK);
+  AddTestCase (new BleTestCase4, Duration::QUICK);
 }
 
 // Do not forget to allocate an instance of this TestSuite
